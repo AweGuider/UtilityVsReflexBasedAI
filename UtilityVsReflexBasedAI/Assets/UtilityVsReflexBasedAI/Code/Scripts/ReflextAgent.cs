@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
-public class ReflexAgent: BaseAgent
+public class ReflexAgent : BaseAgent
 {
     protected override void DecideAction()
     {
@@ -27,7 +27,7 @@ public class ReflexAgent: BaseAgent
         }
     }
 
-    GameObject FindClosest(GameObject[] objs)
+    private GameObject FindClosest(GameObject[] objs)
     {
         GameObject closest = null;
         float minDist = Mathf.Infinity;
