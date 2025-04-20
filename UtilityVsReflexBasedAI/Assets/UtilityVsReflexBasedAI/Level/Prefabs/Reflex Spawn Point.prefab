@@ -11,10 +11,11 @@ GameObject:
   - component: {fileID: 2595705812461263631}
   - component: {fileID: 7724341615286452553}
   - component: {fileID: 8532571614887413007}
+  - component: {fileID: 6605124937021811684}
   m_Layer: 0
   m_Name: Reflex Spawn Point
   m_TagString: Untagged
-  m_Icon: {fileID: 3936346786652291628, guid: 0000000000000000d000000000000000, type: 0}
+  m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -83,3 +84,15 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &6605124937021811684
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6038173612774573772}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54ef8037731cadc48a77f3734721c0b6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

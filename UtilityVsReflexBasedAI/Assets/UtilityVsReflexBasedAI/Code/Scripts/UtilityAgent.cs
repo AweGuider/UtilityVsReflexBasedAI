@@ -2,11 +2,25 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody))]
 public class UtilityAgent : BaseAgent
 {
-    [SerializeField] private float _avoidThreatWeight = 1.5f;
+    [System.Serializable]
+    public class UtilitySpecs
+    {
+        public float avoidThreatWeight = 1f;
+        public float seekCollectibleWeight = 1f;
+    }
+
+    [SerializeField] private float _avoidThreatWeight = 1f;
     [SerializeField] private float _seekCollectibleWeight = 1f;
+
+    private GameObject _currentTarget;
+
+    public void Init(UtilitySpecs utilitySpecs)
+    {
+        _avoidThreatWeight = utilitySpecs.avoidThreatWeight;
+        _seekCollectibleWeight = utilitySpecs.seekCollectibleWeight;
+    }
 
     protected override void DecideAction()
     {
@@ -18,11 +32,13 @@ public class UtilityAgent : BaseAgent
 
         if (threatScore > collectibleScore)
         {
-            MoveAwayFrom(FindClosest(threats));
+            _currentTarget = FindClosest(threats);
+            MoveAwayFrom(_currentTarget);
         }
         else
         {
-            MoveTowards(FindClosest(collectibles));
+            _currentTarget = FindClosest(collectibles);
+            MoveTowards(_currentTarget);
         }
     }
 
@@ -74,5 +90,14 @@ public class UtilityAgent : BaseAgent
         }
 
         return closest;
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (_currentTarget != null)
+        {
+            Gizmos.color = Color.cyan;
+            Gizmos.DrawLine(transform.position, _currentTarget.transform.position);
+        }
     }
 }
