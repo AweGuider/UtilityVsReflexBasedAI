@@ -12,6 +12,8 @@ namespace AweDev.Utilities
 
         private void Start()
         {
+            PauseGame.OnGameSpeedChanged += (speed) => gameSpeed = speed;
+
             gameSpeed = Time.timeScale;
         }
 
@@ -25,7 +27,7 @@ namespace AweDev.Utilities
             }
         }
 
-        public void AdjustSpeed(float mouseScrollValue)
+        private void AdjustSpeed(float mouseScrollValue)
         {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
 

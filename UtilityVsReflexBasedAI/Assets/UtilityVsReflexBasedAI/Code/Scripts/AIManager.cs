@@ -49,14 +49,14 @@ public class AIManager : MonoBehaviour
         for (int i = 0; i < _utilityAgentSpawns.Count; i++ )
         {
             AgentSpawnInfo spawnInfo = _utilityAgentSpawns[i];
-            spawnInfo.name = "Utility Point " + (i + 1); // Unique name for each spawn point
+            spawnInfo.name = "Utility Spawn Point " + (i + 1); // Unique name for each spawn point
             spawnInfo.spawnPoint.name = spawnInfo.name; // Set the name of the spawn point transform
         }
 
         for (int i = 0; i < _reflexAgentSpawns.Count; i++)
         {
             AgentSpawnInfo spawnInfo = _reflexAgentSpawns[i];
-            spawnInfo.name = "Reflext Point " + (i + 1); // Unique name for each spawn point
+            spawnInfo.name = "Reflext Spawn Point " + (i + 1); // Unique name for each spawn point
             spawnInfo.spawnPoint.name = spawnInfo.name; // Set the name of the spawn point transform
         }
     }
