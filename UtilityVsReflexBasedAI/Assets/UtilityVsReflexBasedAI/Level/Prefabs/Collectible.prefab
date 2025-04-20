@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 7690166375265087240}
   - component: {fileID: 130169962435503505}
   - component: {fileID: 1071170662676415158}
+  - component: {fileID: 5488265537776267702}
   m_Layer: 0
   m_Name: Collectible
   m_TagString: Collectible
@@ -99,7 +100,7 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -107,3 +108,15 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
+--- !u!114 &5488265537776267702
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 21310193607437417}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f3436d803905e64e95ab1bbdb4de984, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
