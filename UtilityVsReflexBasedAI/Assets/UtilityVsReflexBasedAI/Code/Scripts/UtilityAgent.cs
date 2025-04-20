@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class UtilityAgent : BaseAgent
@@ -14,6 +15,8 @@ public class UtilityAgent : BaseAgent
     [SerializeField] private float _avoidThreatWeight = 1f;
     [SerializeField] private float _seekCollectibleWeight = 1f;
 
+
+    [SerializeField] private TextMeshProUGUI _scoreText;
     private GameObject _currentTarget;
 
     public void Init(UtilitySpecs utilitySpecs)
@@ -40,6 +43,9 @@ public class UtilityAgent : BaseAgent
             _currentTarget = FindClosest(collectibles);
             MoveTowards(_currentTarget);
         }
+
+
+        UpdateScoreText(threatScore, collectibleScore);
     }
 
     private float CalculateThreatUtility(GameObject[] threats)
@@ -90,6 +96,12 @@ public class UtilityAgent : BaseAgent
         }
 
         return closest;
+    }
+
+    private void UpdateScoreText(float threat, float collect)
+    {
+        if (_scoreText == null) return;
+        _scoreText.text = $"T: {threat:F2}\nC: {collect:F2}";
     }
 
     private void OnDrawGizmos()
