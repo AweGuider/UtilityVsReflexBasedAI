@@ -20,7 +20,7 @@ namespace AweDev.Utilities
         private void Update()
         {
             float scroll = Input.GetAxis("Mouse ScrollWheel");
-            Debug.Log($"Mouse Scroll: {scroll}"); // Debugging line to check scroll value
+            //Debug.Log($"Mouse Scroll: {scroll}"); // Debugging line to check scroll value
             if (Mathf.Abs(scroll) > 0.01f) // prevents tiny accidental scroll changes
             {
                 AdjustSpeed(scroll);

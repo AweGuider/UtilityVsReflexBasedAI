@@ -30,7 +30,9 @@ public class UtilityAgent : BaseAgent
     [SerializeField] private float _maxRelevantDistance = 20f;
 
     [SerializeField] private float _threatProximityPenaltyRadius = 5f;
-[SerializeField] private float _threatProximityPenaltyWeight = 0.5f;
+    [SerializeField] private float _threatProximityPenaltyWeight = 0.5f;
+
+    private AgentStats _agentStats;
 
 
     [SerializeField] private TextMeshProUGUI _scoreText;
@@ -40,6 +42,12 @@ public class UtilityAgent : BaseAgent
     {
         _avoidThreatWeight = utilitySpecs.avoidThreatWeight;
         _seekCollectibleWeight = utilitySpecs.seekCollectibleWeight;
+    }
+
+    protected override void Start()
+    {
+        base.Start();
+        _agentStats = GetComponent<AgentStats>();
     }
 
     protected override void DecideAction()
@@ -77,6 +85,8 @@ public class UtilityAgent : BaseAgent
             {
                 _currentTarget = FindClosest(threats);
                 _lastAction = ActionType.Avoiding;
+
+                _agentStats.SwitchBehavior("Avoiding");
             }
             MoveAwayFrom(_currentTarget);
         }
@@ -86,6 +96,8 @@ public class UtilityAgent : BaseAgent
             {
                 _currentTarget = FindClosest(collectibles);
                 _lastAction = ActionType.Collecting;
+
+                _agentStats.SwitchBehavior("Collecting");
             }
             MoveTowards(_currentTarget);
         }
@@ -133,6 +145,9 @@ public class UtilityAgent : BaseAgent
     private void MoveTowards(GameObject target)
     {
         if (target == null) return;
+
+
+
         Vector3 dir = (target.transform.position - transform.position).normalized;
         _rb.MovePosition(transform.position + dir * moveSpeed * Time.deltaTime);
     }
@@ -172,6 +187,10 @@ public class UtilityAgent : BaseAgent
             float dist = Vector3.Distance(transform.position, _currentTarget.transform.position);
             _scoreText.text += $"\nD: {dist:F1}";
         }
+    }
+    private void OnDestroy()
+    {
+        Debug.Log($"{gameObject.name} summary: Collecting {_agentStats.collectingTime:F1}s, Avoiding {_agentStats.avoidingTime:F1}s");
     }
 
     private void OnDrawGizmos()

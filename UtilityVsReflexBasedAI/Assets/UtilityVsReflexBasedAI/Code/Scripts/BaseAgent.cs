@@ -48,7 +48,7 @@ public abstract class BaseAgent : MonoBehaviour
 	{
         _rb = GetComponent<Rigidbody>();
     }
-	void Start()
+    protected virtual void Start()
 	{
 		Init();
 	}

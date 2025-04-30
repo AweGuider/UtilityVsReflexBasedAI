@@ -8,6 +8,14 @@ public class AgentStats : MonoBehaviour
     private float _deathTime;
     private bool _isAlive = true;
 
+    private float _collectingTime = 0f;
+    public float collectingTime => _collectingTime;
+    private float _avoidingTime = 0f;
+    public float avoidingTime => _avoidingTime;
+
+    private float _lastStateChangeTime;
+    private string _currentState = "None";
+
     private float _firstCollectTime = -1f;
     public float firstCollectTime => _firstCollectTime;
 
@@ -16,6 +24,27 @@ public class AgentStats : MonoBehaviour
     private void Start()
     {
         _spawnTime = Time.time;
+    }
+
+    public void SwitchBehavior(string newState)
+    {
+        float now = Time.time;
+
+        // Store previous state's duration
+        float timeInState = now - _lastStateChangeTime;
+        switch (_currentState)
+        {
+            case "Collecting":
+                _collectingTime += timeInState;
+                break;
+            case "Avoiding":
+                _avoidingTime += timeInState;
+                break;
+        }
+
+        // Switch to new state
+        _currentState = newState;
+        _lastStateChangeTime = now;
     }
 
     public void RegisterFirstCollect()
