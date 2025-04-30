@@ -8,11 +8,23 @@ public class AgentStats : MonoBehaviour
     private float _deathTime;
     private bool _isAlive = true;
 
-    public float TimeAlive => _isAlive ? Time.time - _spawnTime : _deathTime - _spawnTime;
+    private float _firstCollectTime = -1f;
+    public float firstCollectTime => _firstCollectTime;
+
+    public float timeAlive => _isAlive ? Time.time - _spawnTime : _deathTime - _spawnTime;
 
     private void Start()
     {
         _spawnTime = Time.time;
+    }
+
+    public void RegisterFirstCollect()
+    {
+        if (_firstCollectTime < 0f)
+        {
+            _firstCollectTime = Time.time - _spawnTime;
+            Debug.Log($"{gameObject.name} collected first item at {firstCollectTime:F2} seconds.");
+        }
     }
 
     public void MarkAsDead()
@@ -21,7 +33,7 @@ public class AgentStats : MonoBehaviour
 
         _deathTime = Time.time;
         _isAlive = false;
-        Debug.Log($"{gameObject.name} died at {TimeAlive:F2} seconds.");
+        Debug.Log($"{gameObject.name} died at {timeAlive:F2} seconds.");
     }
 }
 

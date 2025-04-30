@@ -25,6 +25,12 @@ public abstract class BaseAgent : MonoBehaviour
     public void AddScore(int value)
     {
         _score += value;
+
+        if (TryGetComponent(out AgentStats stats))
+        {
+            stats.RegisterFirstCollect();
+        }
+
         Debug.Log($"{gameObject.name} score: {_score}");
     }
 
