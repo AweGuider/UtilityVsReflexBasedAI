@@ -8,8 +8,13 @@ public class Threat : MonoBehaviour
     {
         if (other.TryGetComponent(out BaseAgent agent))
         {
+            AgentStats stats = other.GetComponent<AgentStats>();
+            if (stats != null)
+            {
+                stats.MarkAsDead();
+            }
+
             Destroy(other.gameObject);
-            // Optional: Log or notify a system (e.g., “Agent destroyed by threat”)
         }
     }
 }

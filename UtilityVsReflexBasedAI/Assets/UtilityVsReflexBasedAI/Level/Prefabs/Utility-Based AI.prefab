@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 3710885405150923073}
   - component: {fileID: 632732778404621644}
   - component: {fileID: 7974476018398504054}
+  - component: {fileID: 7550693978587503316}
   m_Layer: 0
   m_Name: Utility-Based AI
   m_TagString: Untagged
@@ -154,8 +155,22 @@ MonoBehaviour:
   _avoidThreatWeight: 1
   _seekCollectibleWeight: 1
   _minimumDifferenceThresholdBetweenWeights: 0.03
-  _differenceThreshold: 15
+  _maxRelevantDistance: 20
+  _threatProximityPenaltyRadius: 5
+  _threatProximityPenaltyWeight: 0.5
   _scoreText: {fileID: 1538191917239440244}
+--- !u!114 &7550693978587503316
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5733971479576244670}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06b8469adef032944bea9b3a98ad09ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5950157254936844699
 GameObject:
   m_ObjectHideFlags: 0
