@@ -153,6 +153,8 @@ MonoBehaviour:
   _initOnValidate: 0
   _avoidThreatWeight: 1
   _seekCollectibleWeight: 1
+  _minimumDifferenceThresholdBetweenWeights: 0.03
+  _differenceThreshold: 15
   _scoreText: {fileID: 1538191917239440244}
 --- !u!1 &5950157254936844699
 GameObject:

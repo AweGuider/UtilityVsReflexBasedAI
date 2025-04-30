@@ -12,8 +12,20 @@ public class UtilityAgent : BaseAgent
         public float seekCollectibleWeight = 1f;
     }
 
+    private enum ActionType 
+    { 
+        None, 
+        Avoiding, 
+        Collecting 
+    }
+
+    private ActionType _lastAction = ActionType.None;
+
     [SerializeField] private float _avoidThreatWeight = 1f;
     [SerializeField] private float _seekCollectibleWeight = 1f;
+    [SerializeField] private float _minimumDifferenceThresholdBetweenWeights = 0.05f;
+
+    [SerializeField] private float _maxRelevantDistance = 20f;
 
 
     [SerializeField] private TextMeshProUGUI _scoreText;
@@ -33,17 +45,45 @@ public class UtilityAgent : BaseAgent
         float threatScore = CalculateThreatUtility(threats);
         float collectibleScore = CalculateCollectibleUtility(collectibles);
 
+        float difference = Mathf.Abs(threatScore - collectibleScore);
+        if (difference < _minimumDifferenceThresholdBetweenWeights)
+        {
+            // Difference too small — keep doing what we were doing
+            switch (_lastAction)
+            {
+                case ActionType.Avoiding:
+                    MoveAwayFrom(_currentTarget);
+                    break;
+                case ActionType.Collecting:
+                    MoveTowards(_currentTarget);
+                    break;
+                default:
+                    // Optionally idle or choose a default behavior
+                    break;
+            }
+
+            UpdateScoreText(threatScore, collectibleScore);
+            return;
+        }
+
         if (threatScore > collectibleScore)
         {
-            _currentTarget = FindClosest(threats);
+            if (_lastAction != ActionType.Avoiding)
+            {
+                _currentTarget = FindClosest(threats);
+                _lastAction = ActionType.Avoiding;
+            }
             MoveAwayFrom(_currentTarget);
         }
         else
         {
-            _currentTarget = FindClosest(collectibles);
+            if (_lastAction != ActionType.Collecting)
+            {
+                _currentTarget = FindClosest(collectibles);
+                _lastAction = ActionType.Collecting;
+            }
             MoveTowards(_currentTarget);
         }
-
 
         UpdateScoreText(threatScore, collectibleScore);
     }
@@ -53,10 +93,7 @@ public class UtilityAgent : BaseAgent
         GameObject closest = FindClosest(threats);
         if (closest == null) return 0f;
 
-        float distance = Vector3.Distance(transform.position, closest.transform.position);
-        // Assume 15 units is your max relevant range
-        float normalized = 1f - Mathf.Clamp01(distance / 15f);
-        return normalized * _avoidThreatWeight;
+        return CalculateNormalizedDistanceToClosest(closest);
     }
 
     private float CalculateCollectibleUtility(GameObject[] collectibles)
@@ -64,8 +101,15 @@ public class UtilityAgent : BaseAgent
         GameObject closest = FindClosest(collectibles);
         if (closest == null) return 0f;
 
+        return CalculateNormalizedDistanceToClosest(closest);
+    }
+
+    private float CalculateNormalizedDistanceToClosest(GameObject closest)
+    {
         float distance = Vector3.Distance(transform.position, closest.transform.position);
-        float normalized = 1f - Mathf.Clamp01(distance / 15f);
+
+        // Assume 15 units is your max relevant range
+        float normalized = 1f - Mathf.Clamp01(distance / _maxRelevantDistance);
         return normalized * _seekCollectibleWeight;
     }
 
