@@ -54,7 +54,9 @@ public class UtilityAgent : BaseAgent
         if (closest == null) return 0f;
 
         float distance = Vector3.Distance(transform.position, closest.transform.position);
-        return (1f / (distance + 0.1f)) * _avoidThreatWeight;
+        // Assume 15 units is your max relevant range
+        float normalized = 1f - Mathf.Clamp01(distance / 15f);
+        return normalized * _avoidThreatWeight;
     }
 
     private float CalculateCollectibleUtility(GameObject[] collectibles)
@@ -63,7 +65,8 @@ public class UtilityAgent : BaseAgent
         if (closest == null) return 0f;
 
         float distance = Vector3.Distance(transform.position, closest.transform.position);
-        return (1f / (distance + 0.1f)) * _seekCollectibleWeight;
+        float normalized = 1f - Mathf.Clamp01(distance / 15f);
+        return normalized * _seekCollectibleWeight;
     }
 
     private void MoveTowards(GameObject target)
