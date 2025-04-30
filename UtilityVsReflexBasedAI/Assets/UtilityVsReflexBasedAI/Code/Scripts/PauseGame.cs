@@ -10,6 +10,8 @@ namespace AweDev.Utilities
         [SerializeField] private bool _pauseOnStart;
         [SerializeField] private bool _isPaused;
 
+        private float _previousSpeed = 1f;
+
         public static event Action<float> OnGameSpeedChanged;
 
         private void Init()
@@ -32,7 +34,16 @@ namespace AweDev.Utilities
             {
                 _isPaused = !_isPaused;
 
-                Time.timeScale = _isPaused ? 0 : 1;
+                if (_isPaused)
+                {
+                    _previousSpeed = Time.timeScale;
+                    Time.timeScale = 0;
+                }
+                else
+                {
+                    Time.timeScale = _previousSpeed;
+                }
+
                 OnGameSpeedChanged?.Invoke(Time.timeScale);
             }
         }

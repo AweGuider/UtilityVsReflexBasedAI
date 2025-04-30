@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class UtilityAgent : BaseAgent
@@ -27,6 +29,9 @@ public class UtilityAgent : BaseAgent
 
     [SerializeField] private float _maxRelevantDistance = 20f;
 
+    [SerializeField] private float _threatProximityPenaltyRadius = 5f;
+[SerializeField] private float _threatProximityPenaltyWeight = 0.5f;
+
 
     [SerializeField] private TextMeshProUGUI _scoreText;
     private GameObject _currentTarget;
@@ -43,7 +48,7 @@ public class UtilityAgent : BaseAgent
         GameObject[] threats = GameObject.FindGameObjectsWithTag("Threat");
 
         float threatScore = CalculateThreatUtility(threats);
-        float collectibleScore = CalculateCollectibleUtility(collectibles);
+        float collectibleScore = CalculateCollectibleUtility(collectibles, threats);
 
         float difference = Mathf.Abs(threatScore - collectibleScore);
         if (difference < _minimumDifferenceThresholdBetweenWeights)
@@ -96,12 +101,24 @@ public class UtilityAgent : BaseAgent
         return CalculateNormalizedDistanceToClosest(closest);
     }
 
-    private float CalculateCollectibleUtility(GameObject[] collectibles)
+    private float CalculateCollectibleUtility(GameObject[] collectibles, GameObject[] threats)
     {
         GameObject closest = FindClosest(collectibles);
         if (closest == null) return 0f;
 
-        return CalculateNormalizedDistanceToClosest(closest);
+        float score = CalculateNormalizedDistanceToClosest(closest);
+
+        // Check if threats are nearby the collectible
+        foreach (GameObject threat in threats)
+        {
+            if (Vector3.Distance(closest.transform.position, threat.transform.position) <= _threatProximityPenaltyRadius)
+            {
+                score *= _threatProximityPenaltyWeight; // Reduce utility score
+                break; // One is enough for now
+            }
+        }
+
+        return score;
     }
 
     private float CalculateNormalizedDistanceToClosest(GameObject closest)
@@ -149,6 +166,12 @@ public class UtilityAgent : BaseAgent
     {
         if (_scoreText == null) return;
         _scoreText.text = $"T: {threat:F2}\nC: {collect:F2}";
+
+        if (_currentTarget != null && _lastAction == ActionType.Collecting)
+        {
+            float dist = Vector3.Distance(transform.position, _currentTarget.transform.position);
+            _scoreText.text += $"\nD: {dist:F1}";
+        }
     }
 
     private void OnDrawGizmos()
