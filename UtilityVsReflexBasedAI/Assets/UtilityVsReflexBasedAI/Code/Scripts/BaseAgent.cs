@@ -10,9 +10,12 @@ public abstract class BaseAgent : MonoBehaviour
     [SerializeField] private float _detectionRadius = 10f;
     public float detectionRadius => _detectionRadius;
 
+    [SerializeField] private bool _isFirstCollected;
 
     protected int _score = 0;
     public int score => _score;
+
+    protected AgentStats _agentStats;
 
     [SerializeField] protected Rigidbody _rb;
 
@@ -26,8 +29,9 @@ public abstract class BaseAgent : MonoBehaviour
     {
         _score += value;
 
-        if (TryGetComponent(out AgentStats stats))
+        if (!_isFirstCollected && TryGetComponent(out AgentStats stats))
         {
+            _isFirstCollected = true;
             stats.RegisterFirstCollect();
         }
 
@@ -51,8 +55,28 @@ public abstract class BaseAgent : MonoBehaviour
     protected virtual void Start()
 	{
 		Init();
-	}
-	void OnValidate()
+        _agentStats = GetComponent<AgentStats>();
+
+    }
+
+    protected virtual void OnDestroy()
+    {
+        string message = "";
+        if (_agentStats.firstCollectTime <= 0f)
+        {
+            message += $"{gameObject.name} did not collect first item.\n";
+        }
+        else
+        {
+            message += $"{gameObject.name} collected first item at {_agentStats.firstCollectTime:F2} seconds.\n";
+        }
+
+        //message += $"{gameObject.name} was alive for {_agentStats.timeAlive:F2} seconds.";
+
+        Debug.Log($"{message}");
+    }
+
+    void OnValidate()
 	{
 		if (_initOnValidate) Init();
 	}

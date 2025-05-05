@@ -1,3 +1,4 @@
+using AweDev.Utilities;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -11,7 +12,7 @@ public class SimulationTimer : MonoBehaviour
 
     private void Update()
     {
-        _elapsedTime += Time.deltaTime;
+        _elapsedTime += Time.deltaTime * AdjustGameSpeed.gameSpeed;
         int minutes = Mathf.FloorToInt(_elapsedTime / 60f);
         int seconds = Mathf.FloorToInt(_elapsedTime % 60f);
         _timerText.text = $"T: {minutes:D2}:{seconds:D2}";

@@ -42,8 +42,10 @@ public class AIManager : MonoBehaviour
 
     private void SpawnAgents(List<UtilityAgentSpawnInfo> spawnInfoList, GameObject agentPrefab, Transform parent)
     {
-        foreach (var spawnInfo in spawnInfoList)
+        for (int j = 0; j < spawnInfoList.Count; j++)
         {
+            var spawnInfo = spawnInfoList[j];
+
             if (!spawnInfo.spawnPoint.gameObject.activeSelf) continue; // Skip if spawn point is not assigned
 
             for (int i = 0; i < spawnInfo.amount; i++)
@@ -52,6 +54,8 @@ public class AIManager : MonoBehaviour
                 spawnPosition += new Vector3(i * 1.5f, 0, 0); // Offset so they don't spawn at the same spot
 
                 GameObject agent = Instantiate(agentPrefab, spawnPosition, Quaternion.identity, parent);
+                agent.transform.name = "UtilityAgent " + j;
+
                 UtilityAgent utilityAgent = agent.GetComponent<UtilityAgent>();
                 if (utilityAgent != null)
                 {
@@ -63,15 +67,19 @@ public class AIManager : MonoBehaviour
 
     private void SpawnAgents(List<ReflexAgentSpawnInfo> spawnInfoList, GameObject agentPrefab, Transform parent)
     {
-        foreach (var spawnInfo in spawnInfoList)
+        for (int j = 0; j < spawnInfoList.Count; j++)
         {
+            var spawnInfo = spawnInfoList[j];
+
             if (!spawnInfo.spawnPoint.gameObject.activeSelf) continue; // Skip if spawn point is not assigned
 
             for (int i = 0; i < spawnInfo.amount; i++)
             {
                 Vector3 spawnPosition = spawnInfo.spawnPoint.position;
                 spawnPosition += new Vector3(i * 1.5f, 0, 0); // Offset so they don't spawn at the same spot
-                Instantiate(agentPrefab, spawnPosition, Quaternion.identity, parent);
+                GameObject agent = Instantiate(agentPrefab, spawnPosition, Quaternion.identity, parent);
+
+                agent.transform.name = "ReflextAgent " + j; 
             }
         }
     }

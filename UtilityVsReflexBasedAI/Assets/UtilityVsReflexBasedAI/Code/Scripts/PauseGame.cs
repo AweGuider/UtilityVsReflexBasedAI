@@ -9,13 +9,16 @@ namespace AweDev.Utilities
     {
         [SerializeField] private bool _pauseOnStart;
         [SerializeField] private bool _isPaused;
+        [SerializeField] private float _initialSpeed = 1f; // Initial speed when the game starts
 
-        private float _previousSpeed = 1f;
+        private float _previousSpeed;
 
         public static event Action<float> OnGameSpeedChanged;
 
         private void Init()
         {
+            _previousSpeed = _initialSpeed;
+
             if (_pauseOnStart)
             {
                 _isPaused = true;

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,13 +9,21 @@ namespace AweDev.Utilities
 	{
         [SerializeField] private Vector2 _gameSpeedRange = new(0f, 20f);
         [SerializeField] private float _gameSpeedIncrement = 1f;
-        public float gameSpeed;
+        public static float gameSpeed;
+
+        public static event Action<float> OnGameSpeedChanged;
 
         private void Start()
         {
-            PauseGame.OnGameSpeedChanged += (speed) => gameSpeed = speed;
+            PauseGame.OnGameSpeedChanged += (speed) =>
+            {
+                gameSpeed = speed;
+                OnGameSpeedChanged?.Invoke(gameSpeed);
+            };
 
             gameSpeed = Time.timeScale;
+            
+            OnGameSpeedChanged?.Invoke(gameSpeed);
         }
 
         private void Update()
@@ -54,6 +63,8 @@ namespace AweDev.Utilities
             Mathf.Clamp(gameSpeed, _gameSpeedRange.x, _gameSpeedRange.y);
 
             Time.timeScale = gameSpeed;
+
+            OnGameSpeedChanged?.Invoke(gameSpeed);
 
             //Debug.Log($"Game Speed: {gameSpeed}");
 #endif

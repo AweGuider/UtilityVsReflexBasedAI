@@ -32,7 +32,6 @@ public class UtilityAgent : BaseAgent
     [SerializeField] private float _threatProximityPenaltyRadius = 5f;
     [SerializeField] private float _threatProximityPenaltyWeight = 0.5f;
 
-    private AgentStats _agentStats;
 
 
     [SerializeField] private TextMeshProUGUI _scoreText;
@@ -47,7 +46,6 @@ public class UtilityAgent : BaseAgent
     protected override void Start()
     {
         base.Start();
-        _agentStats = GetComponent<AgentStats>();
     }
 
     protected override void DecideAction()
@@ -188,8 +186,9 @@ public class UtilityAgent : BaseAgent
             _scoreText.text += $"\nD: {dist:F1}";
         }
     }
-    private void OnDestroy()
+    protected override void OnDestroy()
     {
+        base.OnDestroy();
         Debug.Log($"{gameObject.name} summary: Collecting {_agentStats.collectingTime:F1}s, Avoiding {_agentStats.avoidingTime:F1}s");
     }
 

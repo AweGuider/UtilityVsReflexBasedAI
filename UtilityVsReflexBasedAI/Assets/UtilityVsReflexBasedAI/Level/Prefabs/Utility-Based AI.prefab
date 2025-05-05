@@ -148,16 +148,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44dfe4678c4250847b0b8b88688695bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _moveSpeed: 5
+  _moveSpeed: 15
   _detectionRadius: 10
+  _isFirstCollected: 0
   _rb: {fileID: 0}
   _initOnValidate: 0
   _avoidThreatWeight: 1
   _seekCollectibleWeight: 1
-  _minimumDifferenceThresholdBetweenWeights: 0.03
-  _maxRelevantDistance: 20
-  _threatProximityPenaltyRadius: 5
-  _threatProximityPenaltyWeight: 0.5
+  _minimumDifferenceThresholdBetweenWeights: 0.02
+  _maxRelevantDistance: 35
+  _threatProximityPenaltyRadius: 3.5
+  _threatProximityPenaltyWeight: 0.65
   _scoreText: {fileID: 1538191917239440244}
 --- !u!114 &7550693978587503316
 MonoBehaviour:
