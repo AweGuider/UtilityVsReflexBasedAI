@@ -12,6 +12,11 @@ public class UtilityAgent : BaseAgent
     {
         public float avoidThreatWeight = 1f;
         public float seekCollectibleWeight = 1f;
+        public float _minimumDifferenceThresholdBetweenWeights = 0.02f;
+
+        public float _maxRelevantDistance = 35f;
+        public float _threatProximityPenaltyRadius = 3.5f;
+        public float _threatProximityPenaltyWeight = 0.65f;
     }
 
     private enum ActionType 
@@ -25,14 +30,12 @@ public class UtilityAgent : BaseAgent
 
     [SerializeField] private float _avoidThreatWeight = 1f;
     [SerializeField] private float _seekCollectibleWeight = 1f;
-    [SerializeField] private float _minimumDifferenceThresholdBetweenWeights = 0.05f;
+    [SerializeField] private float _minimumDifferenceThresholdBetweenWeights = 0.02f;
 
-    [SerializeField] private float _maxRelevantDistance = 20f;
+    [SerializeField] private float _maxRelevantDistance = 35f;
 
-    [SerializeField] private float _threatProximityPenaltyRadius = 5f;
-    [SerializeField] private float _threatProximityPenaltyWeight = 0.5f;
-
-
+    [SerializeField] private float _threatProximityPenaltyRadius = 3.5f;
+    [SerializeField] private float _threatProximityPenaltyWeight = 0.65f;
 
     [SerializeField] private TextMeshProUGUI _scoreText;
     private GameObject _currentTarget;
@@ -41,6 +44,10 @@ public class UtilityAgent : BaseAgent
     {
         _avoidThreatWeight = utilitySpecs.avoidThreatWeight;
         _seekCollectibleWeight = utilitySpecs.seekCollectibleWeight;
+        _minimumDifferenceThresholdBetweenWeights = utilitySpecs._minimumDifferenceThresholdBetweenWeights;
+        _maxRelevantDistance = utilitySpecs._maxRelevantDistance;
+        _threatProximityPenaltyRadius = utilitySpecs._threatProximityPenaltyRadius;
+        _threatProximityPenaltyWeight = utilitySpecs._threatProximityPenaltyWeight;
     }
 
     protected override void Start()
@@ -70,6 +77,7 @@ public class UtilityAgent : BaseAgent
                     break;
                 default:
                     // Optionally idle or choose a default behavior
+                    _agentStats.SwitchBehavior("Idle");
                     break;
             }
 
@@ -87,6 +95,7 @@ public class UtilityAgent : BaseAgent
                 _agentStats.SwitchBehavior("Avoiding");
             }
             MoveAwayFrom(_currentTarget);
+
         }
         else
         {
@@ -97,7 +106,19 @@ public class UtilityAgent : BaseAgent
 
                 _agentStats.SwitchBehavior("Collecting");
             }
-            MoveTowards(_currentTarget);
+
+            if (_currentTarget == null || !_currentTarget.activeInHierarchy)
+            {
+                // Target was collected or destroyed
+                _lastAction = ActionType.None;
+                _currentTarget = null;
+                _agentStats.SwitchBehavior("Idle");
+            }
+            else
+            {
+                MoveTowards(_currentTarget);
+            }
+
         }
 
         UpdateScoreText(threatScore, collectibleScore);
@@ -108,7 +129,7 @@ public class UtilityAgent : BaseAgent
         GameObject closest = FindClosest(threats);
         if (closest == null) return 0f;
 
-        return CalculateNormalizedDistanceToClosest(closest);
+        return CalculateNormalizedDistanceToClosest(closest, _avoidThreatWeight);
     }
 
     private float CalculateCollectibleUtility(GameObject[] collectibles, GameObject[] threats)
@@ -116,7 +137,7 @@ public class UtilityAgent : BaseAgent
         GameObject closest = FindClosest(collectibles);
         if (closest == null) return 0f;
 
-        float score = CalculateNormalizedDistanceToClosest(closest);
+        float score = CalculateNormalizedDistanceToClosest(closest, _seekCollectibleWeight);
 
         // Check if threats are nearby the collectible
         foreach (GameObject threat in threats)
@@ -124,20 +145,19 @@ public class UtilityAgent : BaseAgent
             if (Vector3.Distance(closest.transform.position, threat.transform.position) <= _threatProximityPenaltyRadius)
             {
                 score *= _threatProximityPenaltyWeight; // Reduce utility score
-                break; // One is enough for now
+                break;
             }
         }
 
         return score;
     }
 
-    private float CalculateNormalizedDistanceToClosest(GameObject closest)
+    private float CalculateNormalizedDistanceToClosest(GameObject closest, float weight)
     {
         float distance = Vector3.Distance(transform.position, closest.transform.position);
 
-        // Assume 15 units is your max relevant range
         float normalized = 1f - Mathf.Clamp01(distance / _maxRelevantDistance);
-        return normalized * _seekCollectibleWeight;
+        return normalized * weight;
     }
 
     private void MoveTowards(GameObject target)

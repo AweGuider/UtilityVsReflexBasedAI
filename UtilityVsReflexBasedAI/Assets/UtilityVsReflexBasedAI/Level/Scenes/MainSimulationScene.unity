@@ -1633,10 +1633,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Threat (5)
       objectReference: {fileID: 0}
-    - target: {fileID: 5678296879143159792, guid: 8f7a8e4cc2c49524e997b2be1c35f328, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 7298761076733587339, guid: 8f7a8e4cc2c49524e997b2be1c35f328, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3
@@ -11054,15 +11050,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6457162571124743994, guid: e0200ce63f2316c4c975c0642acadb23, type: 3}
       propertyPath: _utilityAgentSpawns.Array.data[1].specs.avoidThreatWeight
-      value: 0.5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6457162571124743994, guid: e0200ce63f2316c4c975c0642acadb23, type: 3}
       propertyPath: _utilityAgentSpawns.Array.data[2].specs.avoidThreatWeight
-      value: 0.5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6457162571124743994, guid: e0200ce63f2316c4c975c0642acadb23, type: 3}
       propertyPath: _utilityAgentSpawns.Array.data[3].specs.avoidThreatWeight
-      value: 0.5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6457162571124743994, guid: e0200ce63f2316c4c975c0642acadb23, type: 3}
       propertyPath: _utilityAgentSpawns.Array.data[4].specs.avoidThreatWeight
@@ -11081,20 +11077,32 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6457162571124743994, guid: e0200ce63f2316c4c975c0642acadb23, type: 3}
+      propertyPath: _utilityAgentSpawns.Array.data[1].specs._maxRelevantDistance
+      value: 35
+      objectReference: {fileID: 0}
+    - target: {fileID: 6457162571124743994, guid: e0200ce63f2316c4c975c0642acadb23, type: 3}
+      propertyPath: _utilityAgentSpawns.Array.data[2].specs._maxRelevantDistance
+      value: 35
+      objectReference: {fileID: 0}
+    - target: {fileID: 6457162571124743994, guid: e0200ce63f2316c4c975c0642acadb23, type: 3}
+      propertyPath: _utilityAgentSpawns.Array.data[3].specs._maxRelevantDistance
+      value: 35
+      objectReference: {fileID: 0}
+    - target: {fileID: 6457162571124743994, guid: e0200ce63f2316c4c975c0642acadb23, type: 3}
       propertyPath: _utilityAgentSpawns.Array.data[0].specs.seekCollectibleWeight
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6457162571124743994, guid: e0200ce63f2316c4c975c0642acadb23, type: 3}
       propertyPath: _utilityAgentSpawns.Array.data[1].specs.seekCollectibleWeight
-      value: 2.5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6457162571124743994, guid: e0200ce63f2316c4c975c0642acadb23, type: 3}
       propertyPath: _utilityAgentSpawns.Array.data[2].specs.seekCollectibleWeight
-      value: 2.5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6457162571124743994, guid: e0200ce63f2316c4c975c0642acadb23, type: 3}
       propertyPath: _utilityAgentSpawns.Array.data[3].specs.seekCollectibleWeight
-      value: 2.5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6457162571124743994, guid: e0200ce63f2316c4c975c0642acadb23, type: 3}
       propertyPath: _utilityAgentSpawns.Array.data[4].specs.seekCollectibleWeight
@@ -11107,6 +11115,42 @@ PrefabInstance:
     - target: {fileID: 6457162571124743994, guid: e0200ce63f2316c4c975c0642acadb23, type: 3}
       propertyPath: _utilityAgentSpawns.Array.data[6].specs.seekCollectibleWeight
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6457162571124743994, guid: e0200ce63f2316c4c975c0642acadb23, type: 3}
+      propertyPath: _utilityAgentSpawns.Array.data[1].specs._threatProximityPenaltyRadius
+      value: 3.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6457162571124743994, guid: e0200ce63f2316c4c975c0642acadb23, type: 3}
+      propertyPath: _utilityAgentSpawns.Array.data[1].specs._threatProximityPenaltyWeight
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6457162571124743994, guid: e0200ce63f2316c4c975c0642acadb23, type: 3}
+      propertyPath: _utilityAgentSpawns.Array.data[2].specs._threatProximityPenaltyRadius
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6457162571124743994, guid: e0200ce63f2316c4c975c0642acadb23, type: 3}
+      propertyPath: _utilityAgentSpawns.Array.data[2].specs._threatProximityPenaltyWeight
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6457162571124743994, guid: e0200ce63f2316c4c975c0642acadb23, type: 3}
+      propertyPath: _utilityAgentSpawns.Array.data[3].specs._threatProximityPenaltyRadius
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6457162571124743994, guid: e0200ce63f2316c4c975c0642acadb23, type: 3}
+      propertyPath: _utilityAgentSpawns.Array.data[3].specs._threatProximityPenaltyWeight
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6457162571124743994, guid: e0200ce63f2316c4c975c0642acadb23, type: 3}
+      propertyPath: _utilityAgentSpawns.Array.data[1].specs._minimumDifferenceThresholdBetweenWeights
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6457162571124743994, guid: e0200ce63f2316c4c975c0642acadb23, type: 3}
+      propertyPath: _utilityAgentSpawns.Array.data[2].specs._minimumDifferenceThresholdBetweenWeights
+      value: 0.03
+      objectReference: {fileID: 0}
+    - target: {fileID: 6457162571124743994, guid: e0200ce63f2316c4c975c0642acadb23, type: 3}
+      propertyPath: _utilityAgentSpawns.Array.data[3].specs._minimumDifferenceThresholdBetweenWeights
+      value: 0.03
       objectReference: {fileID: 0}
     - target: {fileID: 6805529627974256708, guid: e0200ce63f2316c4c975c0642acadb23, type: 3}
       propertyPath: m_Name
