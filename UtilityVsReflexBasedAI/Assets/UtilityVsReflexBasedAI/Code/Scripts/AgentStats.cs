@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class AgentStats : MonoBehaviour
 {
+    public int collectiblesCollected = 0;
+
     private float _spawnTime;
     private float _deathTime;
     private bool _isAlive = true;
@@ -64,5 +66,14 @@ public class AgentStats : MonoBehaviour
         _isAlive = false;
         Debug.Log($"{gameObject.name} died at {timeAlive:F2} seconds.");
     }
+
+    public float ComputeFitness(float a = 1f, float b = 0.5f, float c = 0.5f, float d = 0.25f)
+    {
+        return (a * collectiblesCollected) +
+               (b * timeAlive) +
+               (c * collectingTime) -
+               (d * avoidingTime);
+    }
+
 }
 

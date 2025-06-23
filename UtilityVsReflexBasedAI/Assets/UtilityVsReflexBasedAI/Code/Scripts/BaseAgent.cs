@@ -29,10 +29,14 @@ public abstract class BaseAgent : MonoBehaviour
     {
         _score += value;
 
-        if (!_isFirstCollected && TryGetComponent(out AgentStats stats))
+        if (TryGetComponent(out AgentStats stats))
         {
-            _isFirstCollected = true;
-            stats.RegisterFirstCollect();
+            stats.collectiblesCollected += value;
+            if (!_isFirstCollected)
+            {
+                _isFirstCollected = true;
+                stats.RegisterFirstCollect();
+            }
         }
 
         Debug.Log($"{gameObject.name} score: {_score}");
