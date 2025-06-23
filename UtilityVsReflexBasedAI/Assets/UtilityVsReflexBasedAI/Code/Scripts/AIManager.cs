@@ -10,7 +10,7 @@ public class AIManager : MonoBehaviour
     {
         public string name;
         public Transform spawnPoint;
-        public UtilitySpecs specs;
+        public UtilityGene specs;
         public int amount = 1;
     }
 
@@ -110,7 +110,7 @@ public class AIManager : MonoBehaviour
         for (int i = 0; i < _utilityAgentSpawns.Count; i++)
         {
             UtilityAgentSpawnInfo spawnInfo = _utilityAgentSpawns[i];
-            spawnInfo.specs = new UtilitySpecs(); // Reset to default specs
+            spawnInfo.specs = new UtilityGene(); // Reset to default specs
             spawnInfo.amount = 1; // Reset to default amount
         }
 

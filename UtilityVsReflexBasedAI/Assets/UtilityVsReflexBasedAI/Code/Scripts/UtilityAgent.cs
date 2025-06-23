@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using TMPro;
@@ -8,15 +8,32 @@ using UnityEngine;
 public class UtilityAgent : BaseAgent
 {
     [System.Serializable]
-    public class UtilitySpecs
+    public class UtilityGene
     {
         public float avoidThreatWeight = 1f;
         public float seekCollectibleWeight = 1f;
-        public float _minimumDifferenceThresholdBetweenWeights = 0.02f;
+        public float minimumDifferenceThresholdBetweenWeights = 0.02f;
 
-        public float _maxRelevantDistance = 35f;
-        public float _threatProximityPenaltyRadius = 3.5f;
-        public float _threatProximityPenaltyWeight = 0.65f;
+        public float maxRelevantDistance = 35f;
+        public float threatProximityPenaltyRadius = 3.5f;
+        public float threatProximityPenaltyWeight = 0.65f;
+
+        public UtilityGene() { }
+
+        public UtilityGene(float avoid, float seek, float delta, float maxDist, float penaltyRadius, float penaltyWeight)
+        {
+            avoidThreatWeight = avoid;
+            seekCollectibleWeight = seek;
+            minimumDifferenceThresholdBetweenWeights = delta;
+            maxRelevantDistance = maxDist;
+            threatProximityPenaltyRadius = penaltyRadius;
+            threatProximityPenaltyWeight = penaltyWeight;
+        }
+
+        public override string ToString()
+        {
+            return $"Avoid: {avoidThreatWeight:F2}, Seek: {seekCollectibleWeight:F2}, ΔThresh: {minimumDifferenceThresholdBetweenWeights:F2}, MaxDist: {maxRelevantDistance:F2}, Radius: {threatProximityPenaltyRadius:F2}, PenaltyW: {threatProximityPenaltyWeight:F2}";
+        }
     }
 
     private enum ActionType 
@@ -40,14 +57,14 @@ public class UtilityAgent : BaseAgent
     [SerializeField] private TextMeshProUGUI _scoreText;
     private GameObject _currentTarget;
 
-    public void Init(UtilitySpecs utilitySpecs)
+    public void Init(UtilityGene gene)
     {
-        _avoidThreatWeight = utilitySpecs.avoidThreatWeight;
-        _seekCollectibleWeight = utilitySpecs.seekCollectibleWeight;
-        _minimumDifferenceThresholdBetweenWeights = utilitySpecs._minimumDifferenceThresholdBetweenWeights;
-        _maxRelevantDistance = utilitySpecs._maxRelevantDistance;
-        _threatProximityPenaltyRadius = utilitySpecs._threatProximityPenaltyRadius;
-        _threatProximityPenaltyWeight = utilitySpecs._threatProximityPenaltyWeight;
+        _avoidThreatWeight = gene.avoidThreatWeight;
+        _seekCollectibleWeight = gene.seekCollectibleWeight;
+        _minimumDifferenceThresholdBetweenWeights = gene.minimumDifferenceThresholdBetweenWeights;
+        _maxRelevantDistance = gene.maxRelevantDistance;
+        _threatProximityPenaltyRadius = gene.threatProximityPenaltyRadius;
+        _threatProximityPenaltyWeight = gene.threatProximityPenaltyWeight;
     }
 
     protected override void Start()
@@ -66,7 +83,7 @@ public class UtilityAgent : BaseAgent
         float difference = Mathf.Abs(threatScore - collectibleScore);
         if (difference < _minimumDifferenceThresholdBetweenWeights)
         {
-            // Difference too small � keep doing what we were doing
+            // Difference too small — keep doing what we were doing
             switch (_lastAction)
             {
                 case ActionType.Avoiding:
@@ -220,4 +237,5 @@ public class UtilityAgent : BaseAgent
             Gizmos.DrawLine(transform.position, _currentTarget.transform.position);
         }
     }
+
 }
