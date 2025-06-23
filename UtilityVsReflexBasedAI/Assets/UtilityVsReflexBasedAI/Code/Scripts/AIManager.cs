@@ -22,6 +22,9 @@ public class AIManager : MonoBehaviour
         public int amount = 1;
     }
 
+    [SerializeField] private bool _useGeneticMode;
+    [SerializeField] private PopulationManager _populationManager;
+
     [Header("Utility Agent Spawn Info")]
     [SerializeField] private Transform _utilityAgentSpawnParent;
     [SerializeField] private List<UtilityAgentSpawnInfo> _utilityAgentSpawns;
@@ -36,8 +39,20 @@ public class AIManager : MonoBehaviour
 
     private void Start()
     {
-        SpawnAgents(_utilityAgentSpawns, _utilityAgentPrefab, _utilityAgentSpawnParent);
-        SpawnAgents(_reflexAgentSpawns, _reflexAgentPrefab, _reflexAgentSpawnParent);
+        if (_populationManager == null)
+        {
+            _populationManager = FindObjectOfType<PopulationManager>();
+        }
+
+        if (_useGeneticMode && _populationManager != null)
+        {
+            _populationManager.BeginEvolution();
+        }
+        else
+        {
+            SpawnAgents(_utilityAgentSpawns, _utilityAgentPrefab, _utilityAgentSpawnParent);
+            SpawnAgents(_reflexAgentSpawns, _reflexAgentPrefab, _reflexAgentSpawnParent);
+        }
     }
 
     private void SpawnAgents(List<UtilityAgentSpawnInfo> spawnInfoList, GameObject agentPrefab, Transform parent)

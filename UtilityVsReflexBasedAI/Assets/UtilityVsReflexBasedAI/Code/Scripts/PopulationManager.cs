@@ -14,10 +14,10 @@ public class PopulationManager : MonoBehaviour
 
     void Start()
     {
-        GenerateRandomPopulation();
+        //BeginEvolution();
     }
 
-    void GenerateRandomPopulation()
+    public void BeginEvolution()
     {
         currentGenePool.Clear();
 
