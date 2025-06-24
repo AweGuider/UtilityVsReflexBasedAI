@@ -46,7 +46,7 @@ public class AIManager : MonoBehaviour
 
         if (_useGeneticMode && _populationManager != null)
         {
-            _populationManager.BeginEvolution();
+            _populationManager.BeginEvaluation();
         }
         else
         {

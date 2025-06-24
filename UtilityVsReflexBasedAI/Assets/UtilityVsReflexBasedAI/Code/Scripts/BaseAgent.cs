@@ -55,12 +55,12 @@ public abstract class BaseAgent : MonoBehaviour
     protected virtual private void Init()
 	{
         _rb = GetComponent<Rigidbody>();
+
+        _agentStats = GetComponent<AgentStats>();
     }
-    protected virtual void Start()
+    protected virtual void Awake()
 	{
 		Init();
-        _agentStats = GetComponent<AgentStats>();
-
     }
 
     protected virtual void OnDestroy()
@@ -78,6 +78,8 @@ public abstract class BaseAgent : MonoBehaviour
         //message += $"{gameObject.name} was alive for {_agentStats.timeAlive:F2} seconds.";
 
         Debug.Log($"{message}");
+
+        _agentStats.MarkAsDead();
     }
 
     void OnValidate()

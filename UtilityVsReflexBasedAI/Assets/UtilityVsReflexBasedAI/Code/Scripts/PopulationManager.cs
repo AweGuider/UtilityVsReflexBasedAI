@@ -5,19 +5,26 @@ using static UtilityAgent;
 
 public class PopulationManager : MonoBehaviour
 {
-
     [SerializeField] private GameObject utilityAgentPrefab;
     [SerializeField] private Transform[] spawnPoints;
     [SerializeField] private int populationSize = 10;
 
     public List<UtilityGene> currentGenePool = new();
 
+    [SerializeField] private int currentGeneration = 1;
+
     void Start()
     {
-        //BeginEvolution();
+        //GeneratePopulation();
     }
 
-    public void BeginEvolution()
+    public void BeginEvaluation()
+    {
+        currentGeneration = 1;
+        GeneratePopulation();
+    }
+
+    public void GeneratePopulation()
     {
         currentGenePool.Clear();
 
@@ -37,12 +44,14 @@ public class PopulationManager : MonoBehaviour
 
             // Spawn agent
             Transform spawn = spawnPoints[i % spawnPoints.Length];
-            GameObject agentGO = Instantiate(utilityAgentPrefab, spawn.position, Quaternion.identity);
-
-            if (agentGO.TryGetComponent(out UtilityAgent agent))
+            GameObject agentObj = Instantiate(utilityAgentPrefab, spawn.position, Quaternion.identity);
+            UtilityAgent agent = agentObj.GetComponent<UtilityAgent>();
+            if (agent)
             {
-                agent.Init(gene);
+                agent.Init(gene, i, currentGeneration);
             }
         }
+
+        currentGeneration++;
     }
 }

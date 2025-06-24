@@ -4,6 +4,12 @@ using UnityEngine;
 
 public class AgentStats : MonoBehaviour
 {
+    public int agentId;
+    public int generation;
+
+    // Utility Agent Specific
+    public UtilityAgent.UtilityGene gene;
+
     public int collectiblesCollected = 0;
 
     private float _spawnTime;
@@ -22,6 +28,8 @@ public class AgentStats : MonoBehaviour
     public float firstCollectTime => _firstCollectTime;
 
     public float timeAlive => _isAlive ? Time.time - _spawnTime : _deathTime - _spawnTime;
+
+    public float fitness => ComputeFitness();
 
     private void Start()
     {
@@ -65,6 +73,8 @@ public class AgentStats : MonoBehaviour
         _deathTime = Time.time;
         _isAlive = false;
         Debug.Log($"{gameObject.name} died at {timeAlive:F2} seconds.");
+
+        MetricsLogger.LogAgentMetrics(this);
     }
 
     public float ComputeFitness(float a = 1f, float b = 0.5f, float c = 0.5f, float d = 0.25f)

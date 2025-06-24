@@ -45,31 +45,34 @@ public class UtilityAgent : BaseAgent
 
     private ActionType _lastAction = ActionType.None;
 
-    [SerializeField] private float _avoidThreatWeight = 1f;
-    [SerializeField] private float _seekCollectibleWeight = 1f;
-    [SerializeField] private float _minimumDifferenceThresholdBetweenWeights = 0.02f;
+    //[SerializeField] private float _avoidThreatWeight = 1f;
+    //[SerializeField] private float _seekCollectibleWeight = 1f;
+    //[SerializeField] private float _minimumDifferenceThresholdBetweenWeights = 0.02f;
 
-    [SerializeField] private float _maxRelevantDistance = 35f;
+    //[SerializeField] private float _maxRelevantDistance = 35f;
 
-    [SerializeField] private float _threatProximityPenaltyRadius = 3.5f;
-    [SerializeField] private float _threatProximityPenaltyWeight = 0.65f;
+    //[SerializeField] private float _threatProximityPenaltyRadius = 3.5f;
+    //[SerializeField] private float _threatProximityPenaltyWeight = 0.65f;
+
+    [SerializeField] private UtilityGene _gene;
 
     [SerializeField] private TextMeshProUGUI _scoreText;
     private GameObject _currentTarget;
 
-    public void Init(UtilityGene gene)
+    public void Init(UtilityGene gene, int agentId = -1, int generation = -1)
     {
-        _avoidThreatWeight = gene.avoidThreatWeight;
-        _seekCollectibleWeight = gene.seekCollectibleWeight;
-        _minimumDifferenceThresholdBetweenWeights = gene.minimumDifferenceThresholdBetweenWeights;
-        _maxRelevantDistance = gene.maxRelevantDistance;
-        _threatProximityPenaltyRadius = gene.threatProximityPenaltyRadius;
-        _threatProximityPenaltyWeight = gene.threatProximityPenaltyWeight;
-    }
+        _agentStats.gene = gene;
+        if (agentId != -1) _agentStats.agentId = agentId;
+        if (generation != -1) _agentStats.generation = generation;
 
-    protected override void Start()
-    {
-        base.Start();
+        _gene = gene;
+
+        //_avoidThreatWeight = gene.avoidThreatWeight;
+        //_seekCollectibleWeight = gene.seekCollectibleWeight;
+        //_minimumDifferenceThresholdBetweenWeights = gene.minimumDifferenceThresholdBetweenWeights;
+        //_maxRelevantDistance = gene.maxRelevantDistance;
+        //_threatProximityPenaltyRadius = gene.threatProximityPenaltyRadius;
+        //_threatProximityPenaltyWeight = gene.threatProximityPenaltyWeight;
     }
 
     protected override void DecideAction()
@@ -81,7 +84,7 @@ public class UtilityAgent : BaseAgent
         float collectibleScore = CalculateCollectibleUtility(collectibles, threats);
 
         float difference = Mathf.Abs(threatScore - collectibleScore);
-        if (difference < _minimumDifferenceThresholdBetweenWeights)
+        if (difference < _gene.minimumDifferenceThresholdBetweenWeights)
         {
             // Difference too small — keep doing what we were doing
             switch (_lastAction)
@@ -146,7 +149,7 @@ public class UtilityAgent : BaseAgent
         GameObject closest = FindClosest(threats);
         if (closest == null) return 0f;
 
-        return CalculateNormalizedDistanceToClosest(closest, _avoidThreatWeight);
+        return CalculateNormalizedDistanceToClosest(closest, _gene.avoidThreatWeight);
     }
 
     private float CalculateCollectibleUtility(GameObject[] collectibles, GameObject[] threats)
@@ -154,14 +157,14 @@ public class UtilityAgent : BaseAgent
         GameObject closest = FindClosest(collectibles);
         if (closest == null) return 0f;
 
-        float score = CalculateNormalizedDistanceToClosest(closest, _seekCollectibleWeight);
+        float score = CalculateNormalizedDistanceToClosest(closest, _gene.seekCollectibleWeight);
 
         // Check if threats are nearby the collectible
         foreach (GameObject threat in threats)
         {
-            if (Vector3.Distance(closest.transform.position, threat.transform.position) <= _threatProximityPenaltyRadius)
+            if (Vector3.Distance(closest.transform.position, threat.transform.position) <= _gene.threatProximityPenaltyRadius)
             {
-                score *= _threatProximityPenaltyWeight; // Reduce utility score
+                score *= _gene.threatProximityPenaltyWeight; // Reduce utility score
                 break;
             }
         }
@@ -173,7 +176,7 @@ public class UtilityAgent : BaseAgent
     {
         float distance = Vector3.Distance(transform.position, closest.transform.position);
 
-        float normalized = 1f - Mathf.Clamp01(distance / _maxRelevantDistance);
+        float normalized = 1f - Mathf.Clamp01(distance / _gene.maxRelevantDistance);
         return normalized * weight;
     }
 
