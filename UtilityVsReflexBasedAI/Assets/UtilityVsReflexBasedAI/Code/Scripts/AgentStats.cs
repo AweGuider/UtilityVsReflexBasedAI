@@ -79,11 +79,11 @@ public class AgentStats : MonoBehaviour
 
     public float ComputeFitness(float a = 1f, float b = 0.5f, float c = 0.5f, float d = 0.25f)
     {
-        return (a * collectiblesCollected) +
-               (b * timeAlive) +
-               (c * collectingTime) -
-               (d * avoidingTime);
+        return a * collectiblesCollected;
+
+        //return (a * collectiblesCollected) +
+        //       (b * timeAlive) +
+        //       (c * collectingTime) -
+        //       (d * avoidingTime);
     }
-
 }
-

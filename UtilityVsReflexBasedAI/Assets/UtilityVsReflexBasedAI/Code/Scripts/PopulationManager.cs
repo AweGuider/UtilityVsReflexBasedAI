@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using static UtilityAgent;
 
@@ -8,6 +9,8 @@ public class PopulationManager : MonoBehaviour
     [SerializeField] private GameObject utilityAgentPrefab;
     [SerializeField] private Transform[] spawnPoints;
     [SerializeField] private int populationSize = 10;
+
+    public List<AgentStats> allAgentStats = new();
 
     public List<UtilityGene> currentGenePool = new();
 
@@ -49,9 +52,20 @@ public class PopulationManager : MonoBehaviour
             if (agent)
             {
                 agent.Init(gene, i, currentGeneration);
+
+                allAgentStats.Add(agent.GetComponent<AgentStats>());
             }
         }
 
         currentGeneration++;
+    }
+
+    private List<AgentStats> SelectTopPerformers(int topN)
+    {
+        // Sort descending by fitness
+        allAgentStats.Sort((a, b) => b.fitness.CompareTo(a.fitness));
+
+        // Return the top N
+        return allAgentStats.Take(topN).ToList();
     }
 }

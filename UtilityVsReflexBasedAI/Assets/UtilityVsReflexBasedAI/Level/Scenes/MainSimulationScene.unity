@@ -9733,16 +9733,9 @@ MonoBehaviour:
   utilityAgentPrefab: {fileID: 5733971479576244670, guid: a55e765ba93669e428b32ad1bfd772cd, type: 3}
   spawnPoints:
   - {fileID: 545130756}
-  - {fileID: 998897116}
-  - {fileID: 52001436}
-  - {fileID: 929773788}
-  - {fileID: 1630598600}
-  - {fileID: 788578165}
-  - {fileID: 1208883309}
-  - {fileID: 412358549}
-  - {fileID: 873125939}
-  populationSize: 10
+  populationSize: 1
   currentGenePool: []
+  currentGeneration: 1
 --- !u!4 &1864600050
 Transform:
   m_ObjectHideFlags: 0
