@@ -30,6 +30,21 @@ public class UtilityAgent : BaseAgent
             threatProximityPenaltyWeight = penaltyWeight;
         }
 
+        public static UtilityGene Crossover(UtilityGene parentA, UtilityGene parentB)
+        {
+            UtilityGene child = new()
+            {
+                avoidThreatWeight = (Random.value < 0.5f) ? parentA.avoidThreatWeight : parentB.avoidThreatWeight,
+                seekCollectibleWeight = (Random.value < 0.5f) ? parentA.seekCollectibleWeight : parentB.seekCollectibleWeight,
+                minimumDifferenceThresholdBetweenWeights = (Random.value < 0.5f) ? parentA.minimumDifferenceThresholdBetweenWeights : parentB.minimumDifferenceThresholdBetweenWeights,
+                maxRelevantDistance = (Random.value < 0.5f) ? parentA.maxRelevantDistance : parentB.maxRelevantDistance,
+                threatProximityPenaltyRadius = (Random.value < 0.5f) ? parentA.threatProximityPenaltyRadius : parentB.threatProximityPenaltyRadius,
+                threatProximityPenaltyWeight = (Random.value < 0.5f) ? parentA.threatProximityPenaltyWeight : parentB.threatProximityPenaltyWeight
+            };
+
+            return child;
+        }
+
         public override string ToString()
         {
             return $"Avoid: {avoidThreatWeight:F2}, Seek: {seekCollectibleWeight:F2}, ΔThresh: {minimumDifferenceThresholdBetweenWeights:F2}, MaxDist: {maxRelevantDistance:F2}, Radius: {threatProximityPenaltyRadius:F2}, PenaltyW: {threatProximityPenaltyWeight:F2}";
