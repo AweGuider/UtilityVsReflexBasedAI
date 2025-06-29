@@ -13,7 +13,6 @@ public class UtilityAgent : BaseAgent
         public float avoidThreatWeight = 1f;
         public float seekCollectibleWeight = 1f;
         public float minimumDifferenceThresholdBetweenWeights = 0.02f;
-
         public float maxRelevantDistance = 35f;
         public float threatProximityPenaltyRadius = 3.5f;
         public float threatProximityPenaltyWeight = 0.65f;
@@ -43,6 +42,30 @@ public class UtilityAgent : BaseAgent
             };
 
             return child;
+        }
+
+        public static UtilityGene Mutate(UtilityGene gene, float mutationRate)
+        {
+            UtilityGene mutated = gene;
+
+            float MutateValue(float value, float min, float max)
+            {
+                if (Random.value < mutationRate)
+                {
+                    float delta = Random.Range(-0.2f, 0.2f);
+                    return Mathf.Clamp(value + delta, min, max);
+                }
+                return value;
+            }
+
+            mutated.avoidThreatWeight = MutateValue(mutated.avoidThreatWeight, 0.1f, 5f);
+            mutated.seekCollectibleWeight = MutateValue(mutated.seekCollectibleWeight, 0.1f, 5f);
+            mutated.minimumDifferenceThresholdBetweenWeights = MutateValue(mutated.minimumDifferenceThresholdBetweenWeights, 0.01f, 0.5f);
+            mutated.maxRelevantDistance = MutateValue(mutated.maxRelevantDistance, 5f, 50f);
+            mutated.threatProximityPenaltyRadius = MutateValue(mutated.threatProximityPenaltyRadius, 1f, 10f);
+            mutated.threatProximityPenaltyWeight = MutateValue(mutated.threatProximityPenaltyWeight, 0f, 2f);
+
+            return mutated;
         }
 
         public override string ToString()
