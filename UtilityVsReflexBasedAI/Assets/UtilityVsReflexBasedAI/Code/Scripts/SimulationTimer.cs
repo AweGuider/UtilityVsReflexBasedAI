@@ -1,7 +1,4 @@
-using AweDev.Utilities;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -18,7 +15,7 @@ public class SimulationTimer : MonoBehaviour
 
     private void Update()
     {
-        _elapsedTime += Time.deltaTime/* * AdjustGameSpeed.gameSpeed*/;
+        _elapsedTime += Time.deltaTime;
 
         int minutes = Mathf.FloorToInt(_elapsedTime / 60f);
         int seconds = Mathf.FloorToInt(_elapsedTime % 60f);

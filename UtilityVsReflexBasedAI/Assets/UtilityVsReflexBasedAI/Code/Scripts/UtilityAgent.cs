@@ -1,10 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Threading;
-using TMPro;
-using Unity.VisualScripting;
+﻿using TMPro;
 using UnityEngine;
-using UnityEngine.TextCore.Text;
 
 public class UtilityAgent : BaseAgent
 {
