@@ -13,6 +13,11 @@ public class GameSpeedText : MonoBehaviour
         AdjustGameSpeed.OnGameSpeedChanged += UpdateGameSpeedText;
     }
 
+    private void OnDestroy()
+    {
+        AdjustGameSpeed.OnGameSpeedChanged -= UpdateGameSpeedText;
+    }
+
     private void UpdateGameSpeedText(float gameSpeed)
     {
         _text.text = $"x{gameSpeed:F2}";

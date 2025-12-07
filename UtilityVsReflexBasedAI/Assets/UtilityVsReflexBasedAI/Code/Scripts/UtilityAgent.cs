@@ -4,6 +4,7 @@ using System.Threading;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.TextCore.Text;
 
 public class UtilityAgent : BaseAgent
 {
@@ -83,18 +84,10 @@ public class UtilityAgent : BaseAgent
 
     private ActionType _lastAction = ActionType.None;
 
-    //[SerializeField] private float _avoidThreatWeight = 1f;
-    //[SerializeField] private float _seekCollectibleWeight = 1f;
-    //[SerializeField] private float _minimumDifferenceThresholdBetweenWeights = 0.02f;
-
-    //[SerializeField] private float _maxRelevantDistance = 35f;
-
-    //[SerializeField] private float _threatProximityPenaltyRadius = 3.5f;
-    //[SerializeField] private float _threatProximityPenaltyWeight = 0.65f;
-
     [SerializeField] private UtilityGene _gene;
 
     [SerializeField] private TextMeshProUGUI _scoreText;
+    [SerializeField] private TextMeshProUGUI _collectedText;
     private GameObject _currentTarget;
 
     public void Init(UtilityGene gene, int agentId = -1, int generation = -1)
@@ -105,12 +98,15 @@ public class UtilityAgent : BaseAgent
 
         _gene = gene;
 
-        //_avoidThreatWeight = gene.avoidThreatWeight;
-        //_seekCollectibleWeight = gene.seekCollectibleWeight;
-        //_minimumDifferenceThresholdBetweenWeights = gene.minimumDifferenceThresholdBetweenWeights;
-        //_maxRelevantDistance = gene.maxRelevantDistance;
-        //_threatProximityPenaltyRadius = gene.threatProximityPenaltyRadius;
-        //_threatProximityPenaltyWeight = gene.threatProximityPenaltyWeight;
+        _collectedText.SetText("");
+    }
+
+    public override void AddScore(int value)
+    {
+        base.AddScore(value);
+
+        string textToSet = _score > 0 ? $"Collected: {_score}" : "";
+        _collectedText.SetText(textToSet);
     }
 
     protected override void DecideAction()
@@ -267,7 +263,7 @@ public class UtilityAgent : BaseAgent
     protected override void OnDestroy()
     {
         base.OnDestroy();
-        Debug.Log($"{gameObject.name} summary: Collecting {_agentStats.collectingTime:F1}s, Avoiding {_agentStats.avoidingTime:F1}s");
+        //Debug.Log($"{gameObject.name} summary: Collecting {_agentStats.collectingTime:F1}s, Avoiding {_agentStats.avoidingTime:F1}s");
     }
 
     private void OnDrawGizmos()
@@ -278,5 +274,4 @@ public class UtilityAgent : BaseAgent
             Gizmos.DrawLine(transform.position, _currentTarget.transform.position);
         }
     }
-
 }

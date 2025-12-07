@@ -1,4 +1,5 @@
 using AweDev.Utilities;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -8,14 +9,32 @@ public class SimulationTimer : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI _timerText;
 
-    private float _elapsedTime;
+    private static float _elapsedTime;
+
+    [SerializeField] private float _timeLimitSeconds = 30f;
+    private static bool _limitReached = false;
+
+    public static event Action OnTimeLimitReached;
 
     private void Update()
     {
-        _elapsedTime += Time.deltaTime * AdjustGameSpeed.gameSpeed;
+        _elapsedTime += Time.deltaTime/* * AdjustGameSpeed.gameSpeed*/;
+
         int minutes = Mathf.FloorToInt(_elapsedTime / 60f);
         int seconds = Mathf.FloorToInt(_elapsedTime % 60f);
-        _timerText.text = $"T: {minutes:D2}:{seconds:D2}";
+        _timerText.text = $"Time: {minutes:D2}:{seconds:D2}";
+
+        if (!_limitReached && _elapsedTime >= _timeLimitSeconds)
+        {
+            _limitReached = true;
+            OnTimeLimitReached?.Invoke();
+        }
+    }
+
+    public static void ResetTimer()
+    {
+        _elapsedTime = 0f;
+        _limitReached = false;
     }
 }
 

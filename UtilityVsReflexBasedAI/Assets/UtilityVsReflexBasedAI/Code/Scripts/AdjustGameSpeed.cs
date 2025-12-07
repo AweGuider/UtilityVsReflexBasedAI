@@ -7,6 +7,8 @@ namespace AweDev.Utilities
 {
 	public class AdjustGameSpeed : MonoBehaviour
 	{
+        [SerializeField] private bool _isEnabled = false;
+
         [SerializeField] private Vector2 _gameSpeedRange = new(0f, 20f);
         [SerializeField] private float _gameSpeedIncrement = 1f;
         public static float gameSpeed;
@@ -15,24 +17,30 @@ namespace AweDev.Utilities
 
         private void Start()
         {
-            PauseGame.OnGameSpeedChanged += (speed) =>
+            if (_isEnabled)
             {
-                gameSpeed = speed;
-                OnGameSpeedChanged?.Invoke(gameSpeed);
-            };
+                PauseGame.OnGameSpeedChanged += (speed) =>
+                {
+                    gameSpeed = speed;
+                    OnGameSpeedChanged?.Invoke(gameSpeed);
+                };
 
-            gameSpeed = Time.timeScale;
-            
-            OnGameSpeedChanged?.Invoke(gameSpeed);
+                gameSpeed = Time.timeScale;
+
+                OnGameSpeedChanged?.Invoke(gameSpeed);
+            }
         }
 
         private void Update()
         {
-            float scroll = Input.GetAxis("Mouse ScrollWheel");
-            //Debug.Log($"Mouse Scroll: {scroll}"); // Debugging line to check scroll value
-            if (Mathf.Abs(scroll) > 0.01f) // prevents tiny accidental scroll changes
+            if (_isEnabled)
             {
-                AdjustSpeed(scroll);
+                float scroll = Input.GetAxis("Mouse ScrollWheel");
+                //Debug.Log($"Mouse Scroll: {scroll}"); // Debugging line to check scroll value
+                if (Mathf.Abs(scroll) > 0.01f) // prevents tiny accidental scroll changes
+                {
+                    AdjustSpeed(scroll);
+                }
             }
         }
 

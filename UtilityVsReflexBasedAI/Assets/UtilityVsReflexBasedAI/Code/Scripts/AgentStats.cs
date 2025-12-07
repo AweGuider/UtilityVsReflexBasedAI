@@ -62,7 +62,7 @@ public class AgentStats : MonoBehaviour
         if (_firstCollectTime < 0f)
         {
             _firstCollectTime = Time.time - _spawnTime;
-            Debug.Log($"{gameObject.name} collected first item at {firstCollectTime:F2} seconds.");
+            //Debug.Log($"{gameObject.name} collected first item at {firstCollectTime:F2} seconds.");
         }
     }
 
@@ -72,7 +72,7 @@ public class AgentStats : MonoBehaviour
 
         _deathTime = Time.time;
         _isAlive = false;
-        Debug.Log($"{gameObject.name} died at {timeAlive:F2} seconds.");
+        //Debug.Log($"{gameObject.name} died at {timeAlive:F2} seconds.");
 
         MetricsLogger.LogAgentMetrics(this);
     }

@@ -1,9 +1,12 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Collectible : MonoBehaviour
 {
+    public event Action<Collectible> OnCollected;
+    public event Action<Collectible> OnDestroyed;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -14,8 +17,21 @@ public class Collectible : MonoBehaviour
                 agent.AddScore(1);
             }
 
-            Destroy(gameObject);
-            // Optional: Notify a manager or increment a score
+            GetCollected();
+
+            //Destroy(gameObject);
         }
+    }
+
+    private void GetCollected()
+    {
+        OnCollected?.Invoke(this);
+
+        gameObject.SetActive(false);
+    }
+
+    private void OnDestroy()
+    {
+        OnDestroyed?.Invoke(this);
     }
 }

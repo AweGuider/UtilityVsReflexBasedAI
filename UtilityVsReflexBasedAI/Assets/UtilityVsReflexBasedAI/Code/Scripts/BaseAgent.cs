@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -19,13 +20,15 @@ public abstract class BaseAgent : MonoBehaviour
 
     [SerializeField] protected Rigidbody _rb;
 
+    public event Action<BaseAgent> OnAgentDied;
+
     protected virtual void Update()
     {
         SenseEnvironment();
         DecideAction();
     }
 
-    public void AddScore(int value)
+    public virtual void AddScore(int value)
     {
         _score += value;
 
@@ -39,7 +42,7 @@ public abstract class BaseAgent : MonoBehaviour
             }
         }
 
-        Debug.Log($"{gameObject.name} score: {_score}");
+        //Debug.Log($"{gameObject.name} score: {_score}");
     }
 
     protected abstract void DecideAction();
@@ -65,6 +68,8 @@ public abstract class BaseAgent : MonoBehaviour
 
     protected virtual void OnDestroy()
     {
+        OnAgentDied?.Invoke(this);
+
         string message = "";
         if (_agentStats.firstCollectTime <= 0f)
         {
@@ -75,9 +80,7 @@ public abstract class BaseAgent : MonoBehaviour
             message += $"{gameObject.name} collected first item at {_agentStats.firstCollectTime:F2} seconds.\n";
         }
 
-        //message += $"{gameObject.name} was alive for {_agentStats.timeAlive:F2} seconds.";
-
-        Debug.Log($"{message}");
+        //Debug.Log($"{message}");
 
         _agentStats.MarkAsDead();
     }

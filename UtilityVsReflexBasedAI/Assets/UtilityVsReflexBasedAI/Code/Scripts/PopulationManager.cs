@@ -1,37 +1,46 @@
+using AweDev.Utilities;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using static UtilityAgent;
+using Random = UnityEngine.Random;
 
 public class PopulationManager : MonoBehaviour
 {
-    [SerializeField] private GameObject utilityAgentPrefab;
-    [SerializeField] private Transform[] spawnPoints;
-    [SerializeField] private int populationSize = 10;
+    [SerializeField] private GameObject _utilityAgentPrefab;
+    [SerializeField] private Transform[] _spawnPoints;
+    [SerializeField] private int _populationSize = 10;
 
     public List<AgentStats> allAgentStats = new();
 
     public List<UtilityGene> currentGenePool = new();
 
-    [SerializeField] private int currentGeneration = 1;
+    [SerializeField] private int _aliveAgents;
+    [SerializeField] private int _currentGeneration = 1;
+    [SerializeField] private int _maxGenerations = 100;
 
-    void Start()
-    {
-        //GeneratePopulation();
-    }
+    [SerializeField] private float mutationRate = 0.1f;
+
+    public static event Action<int> OnNewGenerationCreated;
 
     public void BeginEvaluation()
     {
-        currentGeneration = 1;
+        _currentGeneration = 1;
+
+        _populationSize = Mathf.Min(_populationSize, _spawnPoints.Length);
         GeneratePopulation();
+
+        SimulationTimer.OnTimeLimitReached += HandleGenerationTimeout;
+        CollectibleController.AllCollectiblesCollected += HandleGenerationAllCollectiblesCollected;
     }
 
     public void GeneratePopulation()
     {
         currentGenePool.Clear();
 
-        for (int i = 0; i < populationSize; i++)
+        for (int i = 0; i < _populationSize; i++)
         {
             UtilityGene gene = new()
             {
@@ -46,18 +55,77 @@ public class PopulationManager : MonoBehaviour
             currentGenePool.Add(gene);
 
             // Spawn agent
-            Transform spawn = spawnPoints[i % spawnPoints.Length];
-            GameObject agentObj = Instantiate(utilityAgentPrefab, spawn.position, Quaternion.identity);
-            UtilityAgent agent = agentObj.GetComponent<UtilityAgent>();
-            if (agent)
-            {
-                agent.Init(gene, i, currentGeneration);
-
-                allAgentStats.Add(agent.GetComponent<AgentStats>());
-            }
+            SpawnAgent(gene, i);
         }
 
-        currentGeneration++;
+        OnNewGenerationCreated?.Invoke(_currentGeneration);
+    }
+
+    private void SpawnAgent(UtilityGene gene, int agentId)
+    {
+        Transform spawn = _spawnPoints[agentId % _spawnPoints.Length];
+        GameObject agentObj = Instantiate(_utilityAgentPrefab, spawn.position, Quaternion.identity);
+        UtilityAgent agent = agentObj.GetComponent<UtilityAgent>();
+
+        agent.Init(gene, agentId, _currentGeneration);
+        allAgentStats.Add(agent.GetComponent<AgentStats>());
+        _aliveAgents++;
+
+        // Subscribe to death event
+        agent.OnAgentDied += HandleAgentDied;
+    }
+
+    private void EndGeneration()
+    {
+        if (_currentGeneration >= _maxGenerations)
+        {
+            Debug.Log("Evaluation complete.");
+            SimulationTimer.OnTimeLimitReached -= HandleGenerationTimeout;
+            CollectibleController.AllCollectiblesCollected -= HandleGenerationAllCollectiblesCollected;
+            PauseGame.Pause();
+            return;
+        }
+
+        List<AgentStats> parents = SelectTopPerformers(5);
+        List<UtilityGene> nextGenerationGenes = new();
+
+        for (int i = 0; i < _populationSize; i++)
+        {
+            // Randomly pick two parents
+            var parentA = parents[Random.Range(0, parents.Count)];
+            var parentB = parents[Random.Range(0, parents.Count)];
+
+            UtilityGene childGene = UtilityGene.Crossover(parentA.gene, parentB.gene);
+            childGene = UtilityGene.Mutate(childGene, mutationRate);
+
+            nextGenerationGenes.Add(childGene);
+        }
+
+        Debug.Log($"Next generation genes count: {nextGenerationGenes.Count}");
+
+        // Clear old agents (if needed)
+        foreach (AgentStats stat in allAgentStats)
+        {
+            if (stat != null)
+            {
+                stat.GetComponent<UtilityAgent>().OnAgentDied -= HandleAgentDied;
+                Destroy(stat.gameObject);
+            }
+        }
+        allAgentStats.Clear();
+
+        // Spawn new generation
+        _currentGeneration++;
+        _aliveAgents = 0;
+
+        for (int i = 0; i < _populationSize; i++)
+        {
+            SpawnAgent(nextGenerationGenes[i], i);
+        }
+
+        SimulationTimer.ResetTimer();
+
+        OnNewGenerationCreated?.Invoke(_currentGeneration);
     }
 
     private List<AgentStats> SelectTopPerformers(int topN)
@@ -67,5 +135,39 @@ public class PopulationManager : MonoBehaviour
 
         // Return the top N
         return allAgentStats.Take(topN).ToList();
+    }
+
+    public void HandleAgentDied(BaseAgent agent)
+    {
+        _aliveAgents--;
+
+        AgentStats stats = agent.GetComponent<AgentStats>();
+        if (allAgentStats.Contains(stats))
+        {
+            allAgentStats.Remove(stats);
+        }
+
+        if (_aliveAgents <= 0)
+        {
+            EndGeneration();
+        }
+    }
+
+    private void HandleGenerationTimeout()
+    {
+        Debug.Log("Timer limit reached — forcing end of generation.");
+        EndGeneration();
+    }
+
+    private void HandleGenerationAllCollectiblesCollected()
+    {
+        Debug.Log("All collectibles collected — forcing end of generation.");
+        EndGeneration();
+    }
+
+    private void OnDestroy()
+    {
+        SimulationTimer.OnTimeLimitReached -= HandleGenerationTimeout;
+        CollectibleController.AllCollectiblesCollected -= HandleGenerationAllCollectiblesCollected;
     }
 }
