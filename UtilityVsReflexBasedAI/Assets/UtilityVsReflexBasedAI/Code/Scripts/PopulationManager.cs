@@ -9,8 +9,10 @@ using Random = UnityEngine.Random;
 public class PopulationManager : MonoBehaviour
 {
     [SerializeField] private GameObject _utilityAgentPrefab;
+    [SerializeField] private SOBestAgent _bestAgent;
+
     [SerializeField] private Transform[] _spawnPoints;
-    [SerializeField] private int _populationSize = 10;
+    [SerializeField] private int _populationSize;
 
     public List<AgentStats> allAgentStats = new();
 
@@ -89,7 +91,20 @@ public class PopulationManager : MonoBehaviour
         List<AgentStats> parents = SelectTopPerformers(5);
         if (parents.Count > 0)
         {
-            BestAgentLogger.LogBestAgent(parents[0]);
+            AgentStats best = parents[0];
+
+            BestAgentLogger.LogBestAgent(best);
+
+            if (_bestAgent != null)
+            {
+                if (best.fitness > _bestAgent.fitness)
+                {
+                    _bestAgent.UpdateFromStats(best);
+#if UNITY_EDITOR
+                    UnityEditor.EditorUtility.SetDirty(_bestAgent);
+#endif
+                }
+            }
         }
         for (int i = 0; i < _populationSize; i++)
         {
