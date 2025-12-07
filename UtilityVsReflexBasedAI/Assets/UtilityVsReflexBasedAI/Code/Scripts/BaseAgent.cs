@@ -22,7 +22,6 @@ public abstract class BaseAgent : MonoBehaviour
 
     protected virtual void Update()
     {
-        SenseEnvironment();
         DecideAction();
     }
 
@@ -44,11 +43,6 @@ public abstract class BaseAgent : MonoBehaviour
     }
 
     protected abstract void DecideAction();
-
-    protected virtual void SenseEnvironment()
-    {
-        // Optional: OverlapSphere, raycasts, or tagging system
-    }
 
     [Tooltip("If you want call Init() on OnValidate(), check it")]
 	[SerializeField] private bool _initOnValidate;

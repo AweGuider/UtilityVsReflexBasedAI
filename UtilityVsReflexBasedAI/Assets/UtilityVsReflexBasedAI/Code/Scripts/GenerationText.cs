@@ -20,4 +20,3 @@ public class GenerationText : MonoBehaviour
         _text.SetText($"Gen: {generationID}");
     }
 }
-

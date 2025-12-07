@@ -6,8 +6,7 @@ public class Threat : MonoBehaviour
     {
         if (other.TryGetComponent(out BaseAgent agent))
         {
-            AgentStats stats = other.GetComponent<AgentStats>();
-            if (stats != null)
+            if (other.TryGetComponent(out AgentStats stats))
             {
                 stats.MarkAsDead();
             }

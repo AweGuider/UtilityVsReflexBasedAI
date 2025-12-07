@@ -34,4 +34,3 @@ public class SimulationTimer : MonoBehaviour
         _limitReached = false;
     }
 }
-

@@ -14,7 +14,7 @@ public class PopulationManager : MonoBehaviour
 
     public List<AgentStats> allAgentStats = new();
 
-    public List<UtilityGene> currentGenePool = new();
+    [SerializeField] private List<UtilityGene> genesPool = new();
 
     [SerializeField] private int _aliveAgents;
     [SerializeField] private int _currentGeneration = 1;
@@ -29,15 +29,15 @@ public class PopulationManager : MonoBehaviour
         _currentGeneration = 1;
 
         _populationSize = Mathf.Min(_populationSize, _spawnPoints.Length);
-        GeneratePopulation();
+        GenerateInitialPopulation();
 
         SimulationTimer.OnTimeLimitReached += HandleGenerationTimeout;
         CollectibleController.AllCollectiblesCollected += HandleGenerationAllCollectiblesCollected;
     }
 
-    public void GeneratePopulation()
+    public void GenerateInitialPopulation()
     {
-        currentGenePool.Clear();
+        genesPool.Clear();
 
         for (int i = 0; i < _populationSize; i++)
         {
@@ -51,9 +51,8 @@ public class PopulationManager : MonoBehaviour
                 threatProximityPenaltyWeight = Random.Range(0.2f, 1f)
             };
 
-            currentGenePool.Add(gene);
+            genesPool.Add(gene);
 
-            // Spawn agent
             SpawnAgent(gene, i);
         }
 
@@ -67,11 +66,11 @@ public class PopulationManager : MonoBehaviour
         UtilityAgent agent = agentObj.GetComponent<UtilityAgent>();
 
         agent.Init(gene, agentId, _currentGeneration);
-        allAgentStats.Add(agent.GetComponent<AgentStats>());
-        _aliveAgents++;
-
-        // Subscribe to death event
         agent.OnAgentDied += HandleAgentDied;
+
+        allAgentStats.Add(agent.GetComponent<AgentStats>());
+
+        _aliveAgents++;
     }
 
     private void EndGeneration()
@@ -85,9 +84,9 @@ public class PopulationManager : MonoBehaviour
             return;
         }
 
+        // Create new genes pool
+        genesPool.Clear();
         List<AgentStats> parents = SelectTopPerformers(5);
-        List<UtilityGene> nextGenerationGenes = new();
-
         for (int i = 0; i < _populationSize; i++)
         {
             // Randomly pick two parents
@@ -97,12 +96,11 @@ public class PopulationManager : MonoBehaviour
             UtilityGene childGene = UtilityGene.Crossover(parentA.gene, parentB.gene);
             childGene = UtilityGene.Mutate(childGene, mutationRate);
 
-            nextGenerationGenes.Add(childGene);
+            genesPool.Add(childGene);
         }
 
-        Debug.Log($"Next generation genes count: {nextGenerationGenes.Count}");
+        //Debug.Log($"Next generation genes count: {nextGenerationGenes.Count}");
 
-        // Clear old agents (if needed)
         foreach (AgentStats stat in allAgentStats)
         {
             if (stat != null)
@@ -112,14 +110,13 @@ public class PopulationManager : MonoBehaviour
             }
         }
         allAgentStats.Clear();
+        _aliveAgents = 0;
 
         // Spawn new generation
         _currentGeneration++;
-        _aliveAgents = 0;
-
         for (int i = 0; i < _populationSize; i++)
         {
-            SpawnAgent(nextGenerationGenes[i], i);
+            SpawnAgent(genesPool[i], i);
         }
 
         SimulationTimer.ResetTimer();
@@ -129,23 +126,20 @@ public class PopulationManager : MonoBehaviour
 
     private List<AgentStats> SelectTopPerformers(int topN)
     {
-        // Sort descending by fitness
         allAgentStats.Sort((a, b) => b.fitness.CompareTo(a.fitness));
 
-        // Return the top N
         return allAgentStats.Take(topN).ToList();
     }
 
     public void HandleAgentDied(BaseAgent agent)
     {
-        _aliveAgents--;
-
         AgentStats stats = agent.GetComponent<AgentStats>();
         if (allAgentStats.Contains(stats))
         {
             allAgentStats.Remove(stats);
         }
 
+        _aliveAgents--;
         if (_aliveAgents <= 0)
         {
             EndGeneration();

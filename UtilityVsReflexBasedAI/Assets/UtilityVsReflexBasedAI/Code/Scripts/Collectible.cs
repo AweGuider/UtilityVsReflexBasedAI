@@ -16,8 +16,6 @@ public class Collectible : MonoBehaviour
             }
 
             GetCollected();
-
-            //Destroy(gameObject);
         }
     }
 

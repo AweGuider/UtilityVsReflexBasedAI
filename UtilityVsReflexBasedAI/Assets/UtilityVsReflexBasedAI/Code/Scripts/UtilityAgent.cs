@@ -15,16 +15,6 @@ public class UtilityAgent : BaseAgent
 
         public UtilityGene() { }
 
-        public UtilityGene(float avoid, float seek, float delta, float maxDist, float penaltyRadius, float penaltyWeight)
-        {
-            avoidThreatWeight = avoid;
-            seekCollectibleWeight = seek;
-            minimumDifferenceThresholdBetweenWeights = delta;
-            maxRelevantDistance = maxDist;
-            threatProximityPenaltyRadius = penaltyRadius;
-            threatProximityPenaltyWeight = penaltyWeight;
-        }
-
         public static UtilityGene Crossover(UtilityGene parentA, UtilityGene parentB)
         {
             UtilityGene child = new()
@@ -87,11 +77,10 @@ public class UtilityAgent : BaseAgent
 
     public void Init(UtilityGene gene, int agentId = -1, int generation = -1)
     {
+        _gene = gene;
         _agentStats.gene = gene;
         if (agentId != -1) _agentStats.agentId = agentId;
         if (generation != -1) _agentStats.generation = generation;
-
-        _gene = gene;
 
         _collectedText.SetText("");
     }
@@ -115,7 +104,6 @@ public class UtilityAgent : BaseAgent
         float difference = Mathf.Abs(threatScore - collectibleScore);
         if (difference < _gene.minimumDifferenceThresholdBetweenWeights)
         {
-            // Difference too small — keep doing what we were doing
             switch (_lastAction)
             {
                 case ActionType.Avoiding:
@@ -125,7 +113,6 @@ public class UtilityAgent : BaseAgent
                     MoveTowards(_currentTarget);
                     break;
                 default:
-                    // Optionally idle or choose a default behavior
                     _agentStats.SwitchBehavior("Idle");
                     break;
             }
@@ -143,8 +130,8 @@ public class UtilityAgent : BaseAgent
 
                 _agentStats.SwitchBehavior("Avoiding");
             }
-            MoveAwayFrom(_currentTarget);
 
+            MoveAwayFrom(_currentTarget);
         }
         else
         {
@@ -158,7 +145,6 @@ public class UtilityAgent : BaseAgent
 
             if (_currentTarget == null || !_currentTarget.activeInHierarchy)
             {
-                // Target was collected or destroyed
                 _lastAction = ActionType.None;
                 _currentTarget = null;
                 _agentStats.SwitchBehavior("Idle");
@@ -167,7 +153,6 @@ public class UtilityAgent : BaseAgent
             {
                 MoveTowards(_currentTarget);
             }
-
         }
 
         UpdateScoreText(threatScore, collectibleScore);
@@ -193,7 +178,7 @@ public class UtilityAgent : BaseAgent
         {
             if (Vector3.Distance(closest.transform.position, threat.transform.position) <= _gene.threatProximityPenaltyRadius)
             {
-                score *= _gene.threatProximityPenaltyWeight; // Reduce utility score
+                score *= _gene.threatProximityPenaltyWeight;
                 break;
             }
         }

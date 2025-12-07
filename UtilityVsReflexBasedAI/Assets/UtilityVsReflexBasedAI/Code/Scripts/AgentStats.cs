@@ -5,7 +5,6 @@ public class AgentStats : MonoBehaviour
     public int agentId;
     public int generation;
 
-    // Utility Agent Specific
     public UtilityAgent.UtilityGene gene;
 
     public int collectiblesCollected = 0;
@@ -38,7 +37,6 @@ public class AgentStats : MonoBehaviour
     {
         float now = Time.time;
 
-        // Store previous state's duration
         float timeInState = now - _lastStateChangeTime;
         switch (_currentState)
         {
@@ -50,7 +48,6 @@ public class AgentStats : MonoBehaviour
                 break;
         }
 
-        // Switch to new state
         _currentState = newState;
         _lastStateChangeTime = now;
     }

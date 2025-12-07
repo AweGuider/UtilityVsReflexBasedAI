@@ -60,12 +60,12 @@ public class AIManager : MonoBehaviour
         {
             var spawnInfo = spawnInfoList[j];
 
-            if (!spawnInfo.spawnPoint.gameObject.activeSelf) continue; // Skip if spawn point is not assigned
+            if (!spawnInfo.spawnPoint.gameObject.activeSelf) continue;
 
             for (int i = 0; i < spawnInfo.amount; i++)
             {
                 Vector3 spawnPosition = spawnInfo.spawnPoint.position;
-                spawnPosition += new Vector3(i * 1.5f, 0, 0); // Offset so they don't spawn at the same spot
+                spawnPosition += new Vector3(i * 1.5f, 0, 0);
 
                 GameObject agent = Instantiate(agentPrefab, spawnPosition, Quaternion.identity, parent);
                 agent.transform.name = "UtilityAgent " + j;
@@ -85,7 +85,7 @@ public class AIManager : MonoBehaviour
         {
             var spawnInfo = spawnInfoList[j];
 
-            if (!spawnInfo.spawnPoint.gameObject.activeSelf) continue; // Skip if spawn point is not assigned
+            if (!spawnInfo.spawnPoint.gameObject.activeSelf) continue;
 
             for (int i = 0; i < spawnInfo.amount; i++)
             {
@@ -104,19 +104,17 @@ public class AIManager : MonoBehaviour
         for (int i = 0; i < _utilityAgentSpawns.Count; i++ )
         {
             UtilityAgentSpawnInfo spawnInfo = _utilityAgentSpawns[i];
-            spawnInfo.name = "Utility Spawn Point " + (i + 1); // Unique name for each spawn point
-            spawnInfo.spawnPoint.name = spawnInfo.name; // Set the name of the spawn point transform
+            spawnInfo.name = "Utility Spawn Point " + (i + 1);
+            spawnInfo.spawnPoint.name = spawnInfo.name;
         }
 
         for (int i = 0; i < _reflexAgentSpawns.Count; i++)
         {
             ReflexAgentSpawnInfo spawnInfo = _reflexAgentSpawns[i];
-            spawnInfo.name = "Reflext Spawn Point " + (i + 1); // Unique name for each spawn point
-            spawnInfo.spawnPoint.name = spawnInfo.name; // Set the name of the spawn point transform
+            spawnInfo.name = "Reflext Spawn Point " + (i + 1);
+            spawnInfo.spawnPoint.name = spawnInfo.name;
         }
     }
-
-
 
     [ContextMenu("Reset Spawn Points Specs")]
     private void ResetSpawnPointsSpecs()
@@ -124,15 +122,14 @@ public class AIManager : MonoBehaviour
         for (int i = 0; i < _utilityAgentSpawns.Count; i++)
         {
             UtilityAgentSpawnInfo spawnInfo = _utilityAgentSpawns[i];
-            spawnInfo.specs = new UtilityGene(); // Reset to default specs
-            spawnInfo.amount = 1; // Reset to default amount
+            spawnInfo.specs = new UtilityGene();
+            spawnInfo.amount = 1;
         }
 
         for (int i = 0; i < _reflexAgentSpawns.Count; i++)
         {
             ReflexAgentSpawnInfo spawnInfo = _reflexAgentSpawns[i];
-            spawnInfo.amount = 1; // Reset to default amount
+            spawnInfo.amount = 1;
         }
     }
 }
-
