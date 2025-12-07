@@ -87,6 +87,10 @@ public class PopulationManager : MonoBehaviour
         // Create new genes pool
         genesPool.Clear();
         List<AgentStats> parents = SelectTopPerformers(5);
+        if (parents.Count > 0)
+        {
+            BestAgentLogger.LogBestAgent(parents[0]);
+        }
         for (int i = 0; i < _populationSize; i++)
         {
             // Randomly pick two parents
