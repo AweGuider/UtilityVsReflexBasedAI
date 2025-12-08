@@ -5,7 +5,7 @@ public class GenerationText : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI _text;
 
-    private void Start()
+    private void Awake()
     {
         PopulationManager.OnNewGenerationCreated += UpdateGenerationText;
     }

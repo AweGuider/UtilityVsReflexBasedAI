@@ -21,9 +21,9 @@ public class Collectible : MonoBehaviour
 
     private void GetCollected()
     {
-        OnCollected?.Invoke(this);
-
         gameObject.SetActive(false);
+
+        OnCollected?.Invoke(this);
     }
 
     private void OnDestroy()

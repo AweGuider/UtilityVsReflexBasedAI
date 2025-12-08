@@ -6,8 +6,7 @@ public abstract class BaseAgent : MonoBehaviour
 {
     [SerializeField] private float _moveSpeed = 5f;
     public float moveSpeed => _moveSpeed;
-    [SerializeField] private float _detectionRadius = 10f;
-    public float detectionRadius => _detectionRadius;
+    [SerializeField] protected float _detectionRadius = 10f;
 
     [SerializeField] private bool _isFirstCollected;
 

@@ -6,6 +6,7 @@ public class UtilityAgent : BaseAgent
     [System.Serializable]
     public class UtilityGene
     {
+        public float detectionRadius = 15f;
         public float avoidThreatWeight = 1f;
         public float seekCollectibleWeight = 1f;
         public float minimumDifferenceThresholdBetweenWeights = 0.02f;
@@ -19,6 +20,7 @@ public class UtilityAgent : BaseAgent
         {
             UtilityGene child = new()
             {
+                detectionRadius = (Random.value < 0.5f) ? parentA.detectionRadius : parentB.detectionRadius,
                 avoidThreatWeight = (Random.value < 0.5f) ? parentA.avoidThreatWeight : parentB.avoidThreatWeight,
                 seekCollectibleWeight = (Random.value < 0.5f) ? parentA.seekCollectibleWeight : parentB.seekCollectibleWeight,
                 minimumDifferenceThresholdBetweenWeights = (Random.value < 0.5f) ? parentA.minimumDifferenceThresholdBetweenWeights : parentB.minimumDifferenceThresholdBetweenWeights,
@@ -44,6 +46,7 @@ public class UtilityAgent : BaseAgent
                 return value;
             }
 
+            mutated.detectionRadius = MutateValue(mutated.detectionRadius, 5f, 40f);
             mutated.avoidThreatWeight = MutateValue(mutated.avoidThreatWeight, 0.1f, 5f);
             mutated.seekCollectibleWeight = MutateValue(mutated.seekCollectibleWeight, 0.1f, 5f);
             mutated.minimumDifferenceThresholdBetweenWeights = MutateValue(mutated.minimumDifferenceThresholdBetweenWeights, 0.01f, 0.5f);
@@ -67,12 +70,15 @@ public class UtilityAgent : BaseAgent
         Collecting 
     }
 
-    private ActionType _lastAction = ActionType.None;
+    [SerializeField] private ActionType _lastAction = ActionType.None;
 
     [SerializeField] private UtilityGene _gene;
 
     [SerializeField] private TextMeshProUGUI _scoreText;
     [SerializeField] private TextMeshProUGUI _collectedText;
+
+    [SerializeField] private float _maxActionDuration = 5f;
+    private float _currentActionTime = 0f;
     private GameObject _currentTarget;
 
     public void Init(UtilityGene gene, int agentId = -1, int generation = -1)
@@ -81,6 +87,8 @@ public class UtilityAgent : BaseAgent
         _agentStats.gene = gene;
         if (agentId != -1) _agentStats.agentId = agentId;
         if (generation != -1) _agentStats.generation = generation;
+
+        _detectionRadius = _gene.detectionRadius;
 
         _collectedText.SetText("");
     }
@@ -95,11 +103,29 @@ public class UtilityAgent : BaseAgent
 
     protected override void DecideAction()
     {
+        _currentActionTime += Time.deltaTime;
+
         GameObject[] collectibles = GameObject.FindGameObjectsWithTag("Collectible");
         GameObject[] threats = GameObject.FindGameObjectsWithTag("Threat");
 
         float threatScore = CalculateThreatUtility(threats);
         float collectibleScore = CalculateCollectibleUtility(collectibles, threats);
+
+        bool collectiblesExist = collectibles != null && collectibles.Length > 0;
+
+        //Debug.Log($"[{name}] Collectible score: {collectibleScore}. Collectible exists: {collectiblesExist}. Time in action: {_currentActionTime:F2}s. Max action duration: {_maxActionDuration}.");
+
+        if (collectibleScore <= 0f && collectiblesExist && _currentActionTime > _maxActionDuration)
+        {
+            _currentTarget = FindClosest(collectibles);
+            _lastAction = ActionType.Collecting;
+            _currentActionTime = 0f;
+            _agentStats.SwitchBehavior("Collecting");
+            MoveTowards(_currentTarget);
+
+            UpdateScoreText(threatScore, collectibleScore);
+            return;
+        }
 
         float difference = Mathf.Abs(threatScore - collectibleScore);
         if (difference < _gene.minimumDifferenceThresholdBetweenWeights)
@@ -107,9 +133,11 @@ public class UtilityAgent : BaseAgent
             switch (_lastAction)
             {
                 case ActionType.Avoiding:
+                    _currentTarget = FindClosest(threats);
                     MoveAwayFrom(_currentTarget);
                     break;
                 case ActionType.Collecting:
+                    _currentTarget = FindClosest(collectibles);
                     MoveTowards(_currentTarget);
                     break;
                 default:
@@ -121,12 +149,15 @@ public class UtilityAgent : BaseAgent
             return;
         }
 
+
         if (threatScore > collectibleScore)
         {
             if (_lastAction != ActionType.Avoiding)
             {
-                _currentTarget = FindClosest(threats);
+                _currentTarget = FindClosestInRange(threats, _gene.detectionRadius);
                 _lastAction = ActionType.Avoiding;
+
+                _currentActionTime = 0f;
 
                 _agentStats.SwitchBehavior("Avoiding");
             }
@@ -137,8 +168,10 @@ public class UtilityAgent : BaseAgent
         {
             if (_lastAction != ActionType.Collecting)
             {
-                _currentTarget = FindClosest(collectibles);
+                _currentTarget = FindClosestInRange(collectibles, _gene.detectionRadius);
                 _lastAction = ActionType.Collecting;
+
+                _currentActionTime = 0f;
 
                 _agentStats.SwitchBehavior("Collecting");
             }
@@ -147,6 +180,12 @@ public class UtilityAgent : BaseAgent
             {
                 _lastAction = ActionType.None;
                 _currentTarget = null;
+
+                if (_currentActionTime > _maxActionDuration)
+                {
+                    _currentActionTime = 0f;
+                }
+
                 _agentStats.SwitchBehavior("Idle");
             }
             else
@@ -160,7 +199,8 @@ public class UtilityAgent : BaseAgent
 
     private float CalculateThreatUtility(GameObject[] threats)
     {
-        GameObject closest = FindClosest(threats);
+        //GameObject closest = FindClosest(threats);
+        GameObject closest = FindClosestInRange(threats, _gene.detectionRadius);
         if (closest == null) return 0f;
 
         return CalculateNormalizedDistanceToClosest(closest, _gene.avoidThreatWeight);
@@ -168,7 +208,8 @@ public class UtilityAgent : BaseAgent
 
     private float CalculateCollectibleUtility(GameObject[] collectibles, GameObject[] threats)
     {
-        GameObject closest = FindClosest(collectibles);
+        //GameObject closest = FindClosest(collectibles);
+        GameObject closest = FindClosestInRange(collectibles, _gene.detectionRadius);
         if (closest == null) return 0f;
 
         float score = CalculateNormalizedDistanceToClosest(closest, _gene.seekCollectibleWeight);
@@ -207,7 +248,14 @@ public class UtilityAgent : BaseAgent
     private void MoveAwayFrom(GameObject target)
     {
         if (target == null) return;
-        Vector3 dir = (transform.position - target.transform.position).normalized;
+
+        //Vector3 dir = (transform.position - target.transform.position).normalized;
+
+        Vector3 away = (transform.position - target.transform.position).normalized;
+        Vector3 toCenter = (Vector3.zero - transform.position).normalized;
+
+        Vector3 dir = (away * 0.7f + toCenter * 0.3f).normalized;
+
         _rb.MovePosition(transform.position + dir * moveSpeed * Time.deltaTime);
     }
 
@@ -220,6 +268,24 @@ public class UtilityAgent : BaseAgent
         {
             float dist = Vector3.Distance(transform.position, obj.transform.position);
             if (dist < minDist)
+            {
+                closest = obj;
+                minDist = dist;
+            }
+        }
+
+        return closest;
+    }
+
+    private GameObject FindClosestInRange(GameObject[] objs, float maxRange)
+    {
+        GameObject closest = null;
+        float minDist = Mathf.Infinity;
+
+        foreach (var obj in objs)
+        {
+            float dist = Vector3.Distance(transform.position, obj.transform.position);
+            if (dist <= maxRange && dist < minDist)
             {
                 closest = obj;
                 minDist = dist;
@@ -247,7 +313,26 @@ public class UtilityAgent : BaseAgent
     }
 
     private void OnDrawGizmos()
-    {
+    {    
+        // 1) Detection radius (from BaseAgent)
+        Gizmos.color = Color.white;
+        Gizmos.DrawWireSphere(transform.position, _detectionRadius);
+
+        if (_gene != null)
+        {
+            // 2) Max relevant distance used in utility
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(transform.position, _gene.maxRelevantDistance);
+
+            // 3) If we currently have a target, draw penalty radius around it
+            if (_currentTarget != null)
+            {
+                Gizmos.color = Color.red;
+                Gizmos.DrawWireSphere(_currentTarget.transform.position, _gene.threatProximityPenaltyRadius);
+            }
+        }
+
+        // 4) Existing line to current target (you already have something similar)
         if (_currentTarget != null)
         {
             Gizmos.color = Color.cyan;

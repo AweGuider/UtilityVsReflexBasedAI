@@ -13,6 +13,7 @@ public class PopulationManager : MonoBehaviour
 
     [SerializeField] private Transform[] _spawnPoints;
     [SerializeField] private int _populationSize;
+    [SerializeField] private float _eliteFraction = 0.2f;
 
     public List<AgentStats> allAgentStats = new();
 
@@ -45,6 +46,7 @@ public class PopulationManager : MonoBehaviour
         {
             UtilityGene gene = new()
             {
+                detectionRadius = Random.Range(5f, 20f),
                 avoidThreatWeight = Random.Range(0.1f, 2f),
                 seekCollectibleWeight = Random.Range(1f, 3f),
                 minimumDifferenceThresholdBetweenWeights = Random.Range(0.01f, 0.1f),
@@ -88,7 +90,7 @@ public class PopulationManager : MonoBehaviour
 
         // Create new genes pool
         genesPool.Clear();
-        List<AgentStats> parents = SelectTopPerformers(5);
+        List<AgentStats> parents = SelectTopPerformers();
         if (parents.Count > 0)
         {
             AgentStats best = parents[0];
@@ -106,6 +108,7 @@ public class PopulationManager : MonoBehaviour
                 }
             }
         }
+
         for (int i = 0; i < _populationSize; i++)
         {
             // Randomly pick two parents
@@ -117,8 +120,6 @@ public class PopulationManager : MonoBehaviour
 
             genesPool.Add(childGene);
         }
-
-        //Debug.Log($"Next generation genes count: {nextGenerationGenes.Count}");
 
         foreach (AgentStats stat in allAgentStats)
         {
@@ -143,9 +144,11 @@ public class PopulationManager : MonoBehaviour
         OnNewGenerationCreated?.Invoke(_currentGeneration);
     }
 
-    private List<AgentStats> SelectTopPerformers(int topN)
+    private List<AgentStats> SelectTopPerformers()
     {
         allAgentStats.Sort((a, b) => b.fitness.CompareTo(a.fitness));
+
+        int topN = Mathf.Max(1, Mathf.RoundToInt(_populationSize * _eliteFraction));
 
         return allAgentStats.Take(topN).ToList();
     }

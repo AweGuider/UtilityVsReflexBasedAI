@@ -1,3 +1,4 @@
+using AweDev.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,7 +32,7 @@ public class CollectibleController : MonoBehaviour
             }
         }
 
-        ActivateCollectibles(true);
+        ActivateCollectibles();
     }
 
     private void OnDestroy()
@@ -48,28 +49,25 @@ public class CollectibleController : MonoBehaviour
         PopulationManager.OnNewGenerationCreated -= HandleNewGenerationCreated;
     }
 
-    private void ActivateCollectibles(bool state)
+    private void ActivateCollectibles()
     {
-        if (state)
-        {
-            _count = _initialCount;
-        }
+        _count = _initialCount;
+
         foreach (Collectible collectible in _collectibles)
         {
-            collectible.gameObject.SetActive(state);
+            collectible.gameObject.SetActive(true);
         }
     }
 
     private void HandleNewGenerationCreated(int generation)
     {
-        ActivateCollectibles(true);
+        Debug.Log($"Reacting to OnNewGenerationCreated on {this}.");
+
+        Invoke(nameof(ActivateCollectibles), 0.1f);
     }
 
     private void HandleCollectibleCollected(Collectible collectible)
     {
-        collectible.OnCollected -= HandleCollectibleCollected;
-        collectible.OnDestroyed -= HandleCollectibleDestroyed;
-
         _count--;
 
         if (_count <= 0 )

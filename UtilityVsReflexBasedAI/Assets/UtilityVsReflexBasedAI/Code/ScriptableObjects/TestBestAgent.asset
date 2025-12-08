@@ -12,17 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 00d727e67cc5f8143b6fed1c2e8c58ee, type: 3}
   m_Name: TestBestAgent
   m_EditorClassIdentifier: 
-  generation: 0
-  agentId: 0
-  fitness: 0
-  collectiblesCollected: 0
-  timeAlive: 0
-  collectingTime: 0
+  generation: 5
+  agentId: 1
+  fitness: 18
+  collectiblesCollected: 18
+  timeAlive: 26.676994
+  collectingTime: 23.823631
   avoidingTime: 0
-  firstCollectTime: 0
-  avoidThreatWeight: 0
-  seekCollectibleWeight: 0
-  minimumDifferenceThresholdBetweenWeights: 0
-  maxRelevantDistance: 0
-  threatProximityPenaltyRadius: 0
-  threatProximityPenaltyWeight: 0
+  firstCollectTime: 0.81700134
+  avoidThreatWeight: 0.27029496
+  seekCollectibleWeight: 2.456324
+  minimumDifferenceThresholdBetweenWeights: 0.26479137
+  maxRelevantDistance: 30.574257
+  threatProximityPenaltyRadius: 2.6170604
+  threatProximityPenaltyWeight: 0.35874966

@@ -283,7 +283,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _moveSpeed: 15
-  _detectionRadius: 10
+  _detectionRadius: 35
   _isFirstCollected: 0
   _rb: {fileID: 0}
   _initOnValidate: 0
@@ -296,6 +296,7 @@ MonoBehaviour:
     threatProximityPenaltyWeight: 0.65
   _scoreText: {fileID: 1538191917239440244}
   _collectedText: {fileID: 8564355099277947363}
+  _maxActionDuration: 5
 --- !u!114 &7550693978587503316
 MonoBehaviour:
   m_ObjectHideFlags: 0
