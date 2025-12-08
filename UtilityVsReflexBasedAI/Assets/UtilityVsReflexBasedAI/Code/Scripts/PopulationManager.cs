@@ -13,7 +13,7 @@ public class PopulationManager : MonoBehaviour
 
     [SerializeField] private Transform[] _spawnPoints;
     [SerializeField] private int _populationSize;
-    [SerializeField] private float _eliteFraction = 0.2f;
+    [SerializeField] private float _eliteFraction = 0.33f;
 
     public List<AgentStats> allAgentStats = new();
 

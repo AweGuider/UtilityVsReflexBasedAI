@@ -128,7 +128,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: 0, y: 0, z: -81.067474, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -287,7 +287,9 @@ MonoBehaviour:
   _isFirstCollected: 0
   _rb: {fileID: 0}
   _initOnValidate: 0
+  _lastAction: 0
   _gene:
+    detectionRadius: 15
     avoidThreatWeight: 1
     seekCollectibleWeight: 1
     minimumDifferenceThresholdBetweenWeights: 0.02
@@ -312,6 +314,7 @@ MonoBehaviour:
   agentId: 0
   generation: 0
   gene:
+    detectionRadius: 15
     avoidThreatWeight: 1
     seekCollectibleWeight: 1
     minimumDifferenceThresholdBetweenWeights: 0.02
